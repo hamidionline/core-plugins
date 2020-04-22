@@ -1,9 +1,3 @@
-
-1. Download and rename ZIP file to: channelmanagement_framework.zip
-2. Install thru Jomres Third Party plugins
-3. Then move folder "channelmanagement_framework" from remote_plugins to core-plugins
-4. That's Its!
-
 ==============================================
 Trigger aide-memoire
 
