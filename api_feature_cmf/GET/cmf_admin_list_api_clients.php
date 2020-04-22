@@ -18,22 +18,15 @@ Return all countries
 
 */
 
-Flight::route('GET /cmf/admin/dictionary/list/access/levels', function()
+Flight::route('GET /cmf/admin/list/api/clients', function( )
 	{
     require_once("../framework.php");
 
-	cmf_utilities::validate_admin_for_user();  // If the user and channel name do not correspond, then this channel is incorrect and can go no further, it'll throw a 204 error
+	cmf_utilities::validate_admin_for_user();
 	
-	$response = array (
+	$query = "SELECT client_id , scope , user_id , identifier FROM #__jomres_oauth_clients ORDER BY user_id , identifier";
+	$clients = doSelectSql($query);
 		
-		"0" => "unregistered",
-		"1" => "registered",
-		"50" => "receptionist",
-		"70" => "property manager",
-		"90" => "super property manager"
-		
-		);
-
-	Flight::json( $response_name = "response" , $response ); 
+	Flight::json( $response_name = "response" , $clients ); 
 	});
 	

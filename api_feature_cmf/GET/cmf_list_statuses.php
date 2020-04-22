@@ -14,26 +14,25 @@ defined( '_JOMRES_INITCHECK' ) or die( '' );
 
 /*
 
-Return all countries 
+Return the statuses returned by the system
 
 */
 
-Flight::route('GET /cmf/admin/dictionary/list/access/levels', function()
+Flight::route('GET /cmf/list/statuses', function()
 	{
     require_once("../framework.php");
 
-	cmf_utilities::validate_admin_for_user();  // If the user and channel name do not correspond, then this channel is incorrect and can go no further, it'll throw a 204 error
+	validate_scope::validate('channel_management');
 	
-	$response = array (
-		
-		"0" => "unregistered",
-		"1" => "registered",
-		"50" => "receptionist",
-		"70" => "property manager",
-		"90" => "super property manager"
-		
-		);
+	cmf_utilities::validate_channel_for_user();  // If the user and channel name do not correspond, then this channel is incorrect and can go no further, it'll throw a 204 error
+	
+	$response = array(
+		"1" => "Success",
+		"0" => "Failure"
+	);
+	
 
 	Flight::json( $response_name = "response" , $response ); 
 	});
+	
 	

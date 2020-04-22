@@ -14,26 +14,23 @@ defined( '_JOMRES_INITCHECK' ) or die( '' );
 
 /*
 
-Return all countries 
+Return all regions
 
 */
 
-Flight::route('GET /cmf/admin/dictionary/list/access/levels', function()
+Flight::route('GET /cmf/list/regions/all', function()
 	{
     require_once("../framework.php");
 
-	cmf_utilities::validate_admin_for_user();  // If the user and channel name do not correspond, then this channel is incorrect and can go no further, it'll throw a 204 error
+	validate_scope::validate('channel_management');
 	
-	$response = array (
-		
-		"0" => "unregistered",
-		"1" => "registered",
-		"50" => "receptionist",
-		"70" => "property manager",
-		"90" => "super property manager"
-		
-		);
+	cmf_utilities::validate_channel_for_user();  // If the user and channel name do not correspond, then this channel is incorrect and can go no further, it'll throw a 204 error
+	
+	$jomres_regions = jomres_singleton_abstract::getInstance('jomres_regions');
+	$jomres_regions->get_all_regions();
+	$regions = $jomres_regions->regions;
 
-	Flight::json( $response_name = "response" , $response ); 
+	Flight::json( $response_name = "response" , $regions ); 
 	});
+	
 	
