@@ -12,9 +12,8 @@
 defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
-// Not currently used 
 
-class channelmanagement_framework_local_item_location
+class channelmanagement_framework_local_item_rmtype
 {
 	
 	function __construct()
@@ -24,13 +23,14 @@ class channelmanagement_framework_local_item_location
 	
 	function get_local_items()
 	{
-		$basic_property_details = jomres_singleton_abstract::getInstance( 'basic_property_details' );
-		$basic_property_details->get_all_resource_features( 0 );
-
+		$jomres_room_types = jomres_singleton_abstract::getInstance('jomres_room_types');
+		$jomres_room_types->get_all_room_types(true);
+		
 		$response = new stdClass();
 		$response->items = array();
-		foreach ($basic_property_details->all_room_features as $f) {
-			$response->items[$f['room_features_uid']] = $f['feature_description'];
+		foreach ($jomres_room_types->room_types as $rmtype) {
+
+			$response->items[$rmtype['room_classes_uid']] = $rmtype['room_class_abbv'];
 		}
 
 		return $response;
