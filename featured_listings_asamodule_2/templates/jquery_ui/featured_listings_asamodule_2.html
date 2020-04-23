@@ -1,0 +1,47 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="nbsp">
+	<style type="text/css">
+      #featured_properties_container { overflow: hidden; }
+      #featured_properties_container div { float: left; width: 230px;}
+      #featured_properties_container .col2 {  }
+	</style>
+
+	
+<div class="ui-corner-all" >
+	<div style="overflow: hidden;width: 735px;">
+		<patTemplate:tmpl name="toprowoutput" unusedvars="strip">
+		<div class="col2">
+			&nbsp;
+		</div>
+		<div class="ui-widget ui-widget-content ui-corner-all" style="padding:3px">
+				<p><center><a href="{URL}"><strong>{NAME}</strong></a>&nbsp;&nbsp;{STARS} {SUPERIOR}</center></p>
+				<p><center><a href="{URL}"><img src="{IMAGE}" width="{WIDTH}" height="{HEIGHT}" /></a></center></p>
+				<p><strong>{STREET}, {TOWN}, {REGION}, {COUNTRY}.</strong></p>
+				<p>{DESCRIPTION}</p>
+				<div>
+					<div class="fg-button ui-state-default ui-priority-primary ui-corner-all fg-button-icon-left" style="width:120px;"><span class="ui-icon ui-icon-circle-plus"></span>
+						<a href="{URL}">{MOREINFORMATION}</a>
+					</div>
+				</div>
+		</div>
+		<div class="col2">
+			&nbsp;
+		</div>
+		</patTemplate:tmpl>
+	</div>	
+	<div id="featured_properties_container">
+	<patTemplate:tmpl name="rows" unusedvars="strip" unusedvars="strip" type="simpleCondition" requiredVars="name">
+		<div class="ui-widget ui-widget-content ui-corner-all {STYLE}" style="margin:3px;padding:3px">
+			<p><center><a href="{URL}"><strong>{NAME}</strong></a>&nbsp;&nbsp;{STARS}</center></p>
+			<p><center><a href="{URL}"><img src="{IMAGE}" width="{WIDTH}" height="{HEIGHT}" /></a></center></p>
+			<p><strong>{STREET}, {TOWN}, {REGION}, {COUNTRY}.</strong></p>
+			<p>{DESCRIPTION}</p>
+			<div>
+				<div class="fg-button ui-state-default ui-priority-primary ui-corner-all fg-button-icon-left" style="width:120px;"><span class="ui-icon ui-icon-circle-plus"></span>
+					<a href="{URL}">{MOREINFORMATION}</a>
+				</div>
+			</div>
+		</div>
+	</patTemplate:tmpl>
+	</div>
+</div>
+</patTemplate:tmpl>
