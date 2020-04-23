@@ -1,0 +1,21 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<h2>{PAGETITLE}</h2>
+<form action="{JOMRES_SITEPAGE_URL}" method="post" name="adminForm">
+{JOMRESTOOLBAR}
+<table class="ui-widget-content ui-corner-all" width="100%" border="0">
+	<tr>
+    	<td width="30%">{HENABLED_YESNO}</td>
+		<td>{ENABLED_YESNO}</td>
+        <td valign="top" rowspan="4" width="140" align="right">
+           <a href="http://www.jomres-extras.com" target="_blank">{LOGO}</a>
+        </td>
+    </tr>
+	<tr>
+		<td>{INSTRUCTIONS}</td>
+		<td>{CONTENT}</td>
+</table>
+{JOMRESTOKEN}
+<input type="hidden" name="task" value="save_je_bookingform_instructions" />
+<input type="hidden" name="puid" value="{PUID}" />
+</form>
+</patTemplate:tmpl>
