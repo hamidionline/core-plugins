@@ -8,7 +8,7 @@ You can download ALL the Jomres Core Plugins and More here:
 
 http://www.nwbooking.com/
 
-
+================================================
 
 1. Download and unZip file in its own folder.
 2. Open folder and Zip up or Compress each folder using the same name as the folder.
