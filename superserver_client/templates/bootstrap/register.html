@@ -1,0 +1,16 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<p class="alert alert-info">{SUPERSERVER_NOT_REGISTERED}</p>
+<a href="{JOMRES_SITEPAGE_URL_ADMIN}&task=super_server_register" class="btn btn-primary">{SUPERSERVER_REGISTER}</a>
+
+<hr/>
+
+<p class="alert alert-{ALERT_CLASS}">{SUPERSERVER_DEV_PROD_STATE}</p>
+
+
+<h5>{SUPERSERVER_SUPPORTED_PROPERTY_TYPES}</h5>
+<ul>
+<patTemplate:tmpl name="rows" unusedvars="strip">
+	<li>{PROPERTY_TYPE_NAME}</li>
+</patTemplate:tmpl>
+</ul>
+</patTemplate:tmpl>
