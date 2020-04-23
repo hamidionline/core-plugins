@@ -1,0 +1,99 @@
+<patTemplate:tmpl name="edit_gateway" unusedvars="strip">
+{GATEWAYNAME}
+{GATEWAYLOGO}
+<hr>
+<form action="" method="post" name="adminForm">
+<table>
+	<tr align="center" valign="middle">
+		<td align="left" valign="top">{JR_GATEWAY_CONFIG_ACTIVE}</td>
+		<td align="left" valign="top">{ACTIVE}</td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HACCOUNT_HOLDER}</td>
+		<td align="left" valign="top"><input type="text" name="accountholder" value="{ACCOUNT_HOLDER}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_IBAN}</td>
+		<td align="left" valign="top"><input type="text" name="bankiban" value="{BANK_IBAN}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_SWIFT}</td>
+		<td align="left" valign="top"><input type="text" name="bankswift" value="{BANK_SWIFT}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_BIC}</td>
+		<td align="left" valign="top"><input type="text" name="bankbic" value="{BANK_BIC}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_NAME}</td>
+		<td align="left" valign="top"><input type="text" name="bankname" value="{BANK_NAME}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top" colspan="3">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HACCOUNT_HOLDER1}</td>
+		<td align="left" valign="top"><input type="text" name="accountholder1" value="{ACCOUNT_HOLDER1}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_IBAN1}</td>
+		<td align="left" valign="top"><input type="text" name="bankiban1" value="{BANK_IBAN1}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_SWIFT1}</td>
+		<td align="left" valign="top"><input type="text" name="bankswift1" value="{BANK_SWIFT1}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_BIC1}</td>
+		<td align="left" valign="top"><input type="text" name="bankbic1" value="{BANK_BIC1}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_NAME1}</td>
+		<td align="left" valign="top"><input type="text" name="bankname1" value="{BANK_NAME1}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top" colspan="3">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HACCOUNT_HOLDER2}</td>
+		<td align="left" valign="top"><input type="text" name="accountholder2" value="{ACCOUNT_HOLDER2}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_IBAN2}</td>
+		<td align="left" valign="top"><input type="text" name="bankiban2" value="{BANK_IBAN2}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_SWIFT2}</td>
+		<td align="left" valign="top"><input type="text" name="bankswift2" value="{BANK_SWIFT2}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_BIC2}</td>
+		<td align="left" valign="top"><input type="text" name="bankbic2" value="{BANK_BIC2}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+    <tr align="center" valign="middle">
+		<td align="left" valign="top">{HBANK_NAME2}</td>
+		<td align="left" valign="top"><input type="text" name="bankname2" value="{BANK_NAME2}" /></td>
+		<td align="left" valign="top">&nbsp;</td>
+	</tr>
+</table>
+{JOMRESTOKEN}
+<input type="hidden" name="plugin" value="{GATEWAY}" />
+<input type="hidden" name="task" value="save_plugin" />
+<input type="submit" value="Submit" class="button" >
+</form>
+</patTemplate:tmpl>

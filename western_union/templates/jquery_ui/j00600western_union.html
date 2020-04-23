@@ -1,0 +1,53 @@
+<patTemplate:tmpl name="interrupt_outgoing">
+<table class="panelwrapper">
+	<tr class="print_gateway_info">
+		<td>
+			<table class="innerwrapper">
+				<tr>
+					<td><b>{JR_GATEWAY_SENDDEPOSITTO} {DEPOSIT} {JR_GATEWAY_BELOWADDRESS}</b></td>
+				</tr>
+                <tr>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td>
+                    	<strong>{HACCOUNT_HOLDER}</strong>{ACCOUNT_HOLDER}
+						<strong>{HBANK_IBAN}</strong>{BANK_IBAN}
+						<strong>{HBANK_SWIFT}</strong>{BANK_SWIFT}
+                        <strong>{HBANK_BIC}</strong>{BANK_BIC}
+                        <strong>{HBANK_NAME}</strong>{BANK_NAME}
+                        <br />
+                        <strong>{HACCOUNT_HOLDER1}</strong>{ACCOUNT_HOLDER1}
+						<strong>{HBANK_IBAN1}</strong>{BANK_IBAN1}
+						<strong>{HBANK_SWIFT1}</strong>{BANK_SWIFT1}
+                        <strong>{HBANK_BIC1}</strong>{BANK_BIC1}
+                        <strong>{HBANK_NAME1}</strong>{BANK_NAME1}
+                        <br />
+                        <strong>{HACCOUNT_HOLDER2}</strong>{ACCOUNT_HOLDER2}
+						<strong>{HBANK_IBAN2}</strong>{BANK_IBAN2}
+						<strong>{HBANK_SWIFT2}</strong>{BANK_SWIFT2}
+                        <strong>{HBANK_BIC2}</strong>{BANK_BIC2}
+                        <strong>{HBANK_NAME2}</strong>{BANK_NAME2}
+                	</td>
+				</tr>
+				<tr>
+					<td><a href="javascript:jomres_print('.print_gateway_info');">{PRINT}</a></td>
+				</tr>
+                <tr>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td>{JR_GATEWAY_CONTACTUS1} {PROP_TEL} {JR_GATEWAY_CONTACTUS2} {PROP_EMAIL}.</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<form action="" method="post" name="bookingForm">
+<input type="hidden" name="plugin" value="{GATEWAY}" />
+<input type="hidden" name="task" value="processpayment" />
+<input type="hidden" name="interrupted" value="1" />
+<input type="submit" value="{SUBMIT}" class="button"/>
+{HIDDEN}
+</form>
+</patTemplate:tmpl>
