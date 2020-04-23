@@ -1,0 +1,73 @@
+<patTemplate:tmpl name="pageoutput" >
+
+<script type="text/javascript">
+	jomresJquery(function(){
+		//all hover and click logic for buttons
+		jomresJquery(".fg-button:not(.ui-state-disabled)")
+		.hover(
+			function(){ 
+				jomresJquery(this).addClass("ui-state-hover"); 
+			},
+			function(){ 
+				jomresJquery(this).removeClass("ui-state-hover"); 
+			}
+		)
+		.mousedown(function(){
+				jomresJquery(this).parents('.fg-buttonset-single:first').find(".fg-button.ui-state-active").removeClass("ui-state-active");
+				if( jomresJquery(this).is('.ui-state-active.fg-button-toggleable, .fg-buttonset-multi .ui-state-active') ){ jomresJquery(this).removeClass("ui-state-active"); }
+				else { jomresJquery(this).addClass("ui-state-active"); }
+		})
+		.mouseup(function(){
+			if(! jomresJquery(this).is('.fg-button-toggleable, .fg-buttonset-single .fg-button,  .fg-buttonset-multi .fg-button') ){
+				jomresJquery(this).removeClass("ui-state-active");
+			}
+		});
+		
+	});
+	
+function toggle_review_div(uid)
+	{
+	div_id = "#property_reviews"+uid;
+	jomresJquery('div.'+div_id).toggle("slow");
+	}
+</script>
+
+<div class="ui-widget ui-widget-content ui-corner-all" >
+<table width="100%">
+	<tr>
+		<td >
+			<div class="fg-button ui-state-default ui-priority-primary ui-corner-all fg-button-icon-left"><span class="ui-icon ui-icon-circle-plus"></span>
+			<a href = "{JOMRES_SITEPAGE_URL}&task=popular_properties">{_JOMRES_DESTINATIONS_ALLPROPERTIES}</a>
+			</div>
+		</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	</tr>
+	<patTemplate:tmpl name="rows" >
+	<tr>
+		<td >
+			<div class="fg-button ui-state-default ui-priority-secondary ui-corner-all fg-button-icon-left"><span class="ui-icon ui-icon-bullet"></span>
+				<a href="{MOREINFORMATIONLINK}">{MOREINFORMATION}</a>
+			</div>
+		</td>
+		<td>
+			<a href="{MOREINFORMATIONLINK}">{PROP_NAME}</a>   
+		</td>
+		<td><a href="{TOWN}">{TOWN_TEXT}</a></td>
+		<td><a href="{REGION}">{REGION_TEXT}</a></td>
+		<td><a href="{COUNTRY}">{COUNTRY_TEXT}</a></td>
+		<td class="small" >{_JOMRES_DESTINATIONS_REVIEWS}</td>
+		<td>{NUMBEROFREVIEWS}</td>
+		<td class="small">{_JOMRES_DESTINATIONS_SCORE}</td>
+		<td>{SCORE}</td>
+	</tr>
+	</patTemplate:tmpl>
+</table>
+</div>
+</patTemplate:tmpl>
