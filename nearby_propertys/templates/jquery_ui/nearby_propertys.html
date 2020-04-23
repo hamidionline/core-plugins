@@ -1,0 +1,21 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<style type="text/css">
+.nearby-props{padding:0 5px;}
+</style>
+<div class="ui-widget-content ui-corner-all nearby-props">
+<h2>{PAGETITLE}</h2>
+<div class="panelwrapper">
+	<div class="innerwrapper">
+		<patTemplate:tmpl name="nearbyprops">
+        <div style="width:100%;border-bottom:1px dotted #CCCCCC;padding:4px 0;">
+        	<a href="{MOREINFORMATIONLINK}" style="font-weight:bold;">{PROPERTYNAME}</a>&nbsp;&nbsp;{STARS}&nbsp;&nbsp;{DISTANCE}
+            <span style="float:right; font-weight:bold;">
+            	{PRICE_PRE_TEXT} {PRICE_PRICE} {PRICE_POST_TEXT}
+            </span>
+        </div>
+        </patTemplate:tmpl>
+	</div>
+</div>
+</div>
+<br />
+</patTemplate:tmpl>
