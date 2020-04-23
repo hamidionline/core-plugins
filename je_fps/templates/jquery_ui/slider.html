@@ -1,0 +1,29 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<script type="text/javascript">
+jomresJquery(document).ready(function(){
+	jomresJquery('.ad-gallery').adGallery();
+});
+</script>
+<div class="je-fps-gallery-wrapper">
+<div class="je-fps-module-title">{HTITLE}</div>
+	<div class="ad-gallery">
+	  <div class="ad-image-wrapper">
+	  </div>
+	  <div class="ad-controls">
+	  </div>
+	  <div class="ad-nav">
+		<div class="ad-thumbs">
+		  <ul class="ad-thumb-list">
+			<patTemplate:tmpl name="rows">
+			<li>
+			  <a href="{PROPERTY_IMAGE}">
+				<img src="{PROPERTY_IMAGE_THUMB}" title="{PROPERTY_NAME}" longdesc="{MOREINFORMATIONLINK}" alt="{PROPERTY_DESCRIPTION}" width="75" height="50"/>
+			  </a>
+			</li>
+			</patTemplate:tmpl>
+		  </ul>
+		</div>
+	  </div>
+	</div>
+</div>
+</patTemplate:tmpl>
