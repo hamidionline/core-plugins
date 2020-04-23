@@ -12,11 +12,17 @@
 defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
-if (!defined('JOMRES_INSTALLER')) exit;
-
-$plugin_name = "jomsearch_m2";
-$plugin_type = "module";
-$params="";
-
-
-install_external_plugin($plugin_name,$plugin_type,"",$params);
+class plugin_check_dependencies
+	{
+	function __construct()
+		{
+		$this->test_result = true;
+		$this->dependencies = array ( "alternative_init" );
+		foreach ($this->dependencies as $p)
+			{
+			if (!file_exists(JOMRESPATH_BASE.JRDS."core-plugins".JRDS.$p.JRDS."plugin_info.php") && !file_exists(JOMRESPATH_BASE.JRDS."remote_plugins".JRDS.$p.JRDS."plugin_info.php") )
+				$this->test_result = false;
+			}
+		}
+	
+	}
