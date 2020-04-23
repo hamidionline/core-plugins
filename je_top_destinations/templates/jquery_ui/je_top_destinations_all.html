@@ -1,0 +1,17 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<style type="text/css">
+.je_top_destination{width:180px;float:left;margin-top:10px;margin-bottom:15px;padding-bottom:10px;}
+.je_top_destination_country{font-size:14px;font-weight:bold;margin:0 0 10px;}
+.je_top_destination_town{margin:16px 0;font-size:11px;}
+</style>
+<h2>{HALLDESTINATIONS}</h2>
+<div class="ui-helper-clearfix">
+	<patTemplate:tmpl name="rows">
+	<div class="je_top_destination">
+		<div class="je_top_destination_country">{COUNTRY_FLAG}&nbsp;{COUNTRY}</div>
+		<div class="je_top_destination_town">{TOWNS}</div>
+	</div>
+	<div style="{STYLE}"></div>
+	</patTemplate:tmpl>
+</div>
+</patTemplate:tmpl>

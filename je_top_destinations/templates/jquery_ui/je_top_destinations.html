@@ -1,0 +1,30 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<style type="text/css">
+.je_top_destination{width:229px;float:left;border-bottom:1px dotted #ccc;margin-top:10px;padding-bottom:10px;}
+.je_top_destination_image{width:88px;margin-right:5px;float:left;padding:5px;}
+.je_top_destination_details{float:left;width:123px;}
+.je_top_destination_town{font-size:14px;font-weight:bold;margin:0;}
+.je_top_destination_region{font-size:11px;font-weight:bold;margin:0;}
+.je_top_destination_country{margin:0;font-size:11px;}
+.je_top_destination_counter{margin:10px 0;font-weight:bold;}
+.browse-all{text-align:center;margin-top: 10px;}
+.browse-all a.fg-button {float:none !important;}
+</style>
+<div class="ui-helper-clearfix">
+	<patTemplate:tmpl name="rows">
+	<div class="je_top_destination">
+		<div class="je_top_destination_image ui-state-default ui-corner-all">{TOWN_IMAGE}</div>
+		<div class="je_top_destination_details">
+			<div class="je_top_destination_town">{TOWN}</div>
+			<div class="je_top_destination_region">{REGION}</div>
+			<div class="je_top_destination_country">{COUNTRY_FLAG}&nbsp;{COUNTRY}</div>
+			<div class="je_top_destination_counter">{COUNTER}&nbsp;{HPROPERTIES}</div>
+		</div>
+	</div>
+	</patTemplate:tmpl>
+	<div style="clear:both;"></div>
+	<div class="full-width browse-all ui-helper-clearfix" align="center">
+		<a href="{URL}" title="{HBROWSEALLDESTINATIONS}" class="browseall fg-button ui-state-default ui-corner-all">{HBROWSEALLDESTINATIONS}</a>
+	</div>
+</div>
+</patTemplate:tmpl>
