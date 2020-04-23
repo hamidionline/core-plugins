@@ -1,0 +1,34 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<script language="JavaScript" type="text/javascript">
+jomresJquery(document).ready(function() {
+	var oTable = jomresJquery('#minimum_occupancies').dataTable({
+		"bJQueryUI": true,
+		"sPaginationType": "full_numbers"
+	});
+} );
+</script>
+<h2>{PAGETITLE}</h2>
+<p>{_OCCUPANCIES_DESCRIPTION}</p>
+<form action="{JOMRES_SITEPAGE_URL_NOSEF}"  method="post" name="adminForm">
+{JOMRESTOOLBAR}
+<table id="minimum_occupancies" border="0" width="100%">
+	<thead>
+		<tr>
+			<th></td>
+			<th>{_JOMRES_COM_MR_VRCT_ROOMTYPES_HEADER_LINK}</th>
+			<th>{_OCCUPANCIES_NUMBER_OF_GUESTTYPE}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<patTemplate:tmpl name="rows" unusedvars="nbsp">
+		<tr>
+			<td>{EDITLINK}</td>
+			<td><img src="{IMAGE}" /></td>
+			<td>{NUMBERS}</td>
+		</tr>
+		</patTemplate:tmpl>
+	</tbody>
+</table>
+<input type="hidden" name="task" value="newExtra" />
+</form>
+</patTemplate:tmpl>
