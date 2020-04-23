@@ -1,0 +1,62 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<script type="text/javascript">
+var ajaxurl = "{JOMRES_SITEPAGE_URL_ADMIN_AJAX}&task=subscriptions_cms_users_find";
+jomresJquery(function () {
+	jomresJquery("#cms_username").autocomplete({
+		source: ajaxurl,
+		minLength: 2,
+		focus: function( event, ui ) {
+			jomresJquery( "#cms_username" ).val( ui.item.username );
+			return false;
+			},
+		select: function (event, ui) {
+			jomresJquery("#cms_user_id").val(ui.item.id);
+			jomresJquery("#cms_username").val(ui.item.username);
+			return false;
+			}
+		})
+	.autocomplete( "instance" )._renderItem = function( ul, item ) {
+		return jomresJquery( "<li>" )
+		.append( "<a>" + item.id + " - " + item.username + "</a>" )
+		.appendTo( ul );
+		};
+	});
+</script>
+
+<h2>{PAGETITLE}</h2>
+
+<form action="{JOMRES_SITEPAGE_URL_ADMIN}" method="post" name="adminForm" class="form-horizontal">
+{JOMRESTOOLBAR}
+<table width="100%" border="0" class="ui-widget-content ui-corner-all">
+	<tr>
+		<td width="30%">{HUSER}</td>
+		<td><input type="text" id="cms_username" name="cms_username" value="{USERNAME}" class="inputbox"/> {HUSER_DESC}</td>
+	</tr>
+	<tr>
+		<td width="30%">{HPACKAGE_ID}</td>
+		<td>{PACKAGE_ID}</td>
+	</tr>
+	<tr>
+		<td width="30%">{HRAISED_DATE}</td>
+		<td>{RAISED_DATE}</td>
+	</tr>
+	<tr>
+		<td width="30%">{HEXPIRATION_DATE}</td>
+		<td>{EXPIRATION_DATE}</td>
+	</tr>
+	<tr>
+		<td width="30%">{HSUBSCRIPTION_STATUS}</td>
+		<td>{SUBSCRIPTION_STATUS}</td>
+	</tr>
+	<tr>
+		<td width="30%">{HINVOICE_STATUS}</td>
+		<td>{INVOICE_STATUS}</td>
+	</tr>
+</table>
+<input type="hidden" name="id" value="{ID}"/>
+<input type="hidden" name="invoice_id" value="{INVOICE_ID}"/>
+<input type="hidden" id="cms_user_id" name="cms_user_id" value="{USER_ID}"/>
+<input type="hidden" name="option" value="com_jomres"/>
+<input type="hidden" name="task" value="save_subscription"/>
+</form>
+</patTemplate:tmpl>
