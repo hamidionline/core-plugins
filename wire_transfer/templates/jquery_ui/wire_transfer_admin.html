@@ -1,0 +1,87 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="nbsp">
+<h2>{PAGETITLE}</h2>
+<p>{INSTRUCTIONS}</p>
+<form action="{JOMRES_SITEPAGE_URL_ADMIN}" method="post" name="adminForm">
+{JOMRESTOOLBAR}
+<table class="ui-widget-content ui-corner-all" width="100%" border="0">
+	<tr>
+        <td width="30%">{JR_GATEWAY_CONFIG_OVERRIDE_ACTIVE}</td>
+        <td>{ACTIVE}</td>
+        <td valign="top" rowspan="19" width="140" align="right">
+           <a href="http://www.jomres-extras.com" target="_blank">{LOGO}</a></td>
+        </td>
+    </tr>
+    <tr>
+    	<td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>{HACCOUNT_HOLDER}</td>
+        <td><input type="text" size="40" name="accountholder" value="{ACCOUNT_HOLDER}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_IBAN}</td>
+        <td><input type="text" size="40" name="bankiban" value="{BANK_IBAN}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_SWIFT}</td>
+        <td><input type="text" size="40" name="bankswift" value="{BANK_SWIFT}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_BIC}</td>
+        <td><input type="text" size="40" name="bankbic" value="{BANK_BIC}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_NAME}</td>
+        <td><input type="text" size="40" name="bankname" value="{BANK_NAME}" /></td>
+    </tr>
+    <tr>
+    	<td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>{HACCOUNT_HOLDER1}</td>
+        <td><input type="text" size="40" name="accountholder1" value="{ACCOUNT_HOLDER1}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_IBAN1}</td>
+        <td><input type="text" size="40" name="bankiban1" value="{BANK_IBAN1}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_SWIFT1}</td>
+        <td><input type="text" size="40" name="bankswift1" value="{BANK_SWIFT1}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_BIC1}</td>
+        <td><input type="text" size="40" name="bankbic1" value="{BANK_BIC1}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_NAME1}</td>
+        <td><input type="text" size="40" name="bankname1" value="{BANK_NAME1}" /></td>
+    </tr>
+    <tr>
+    	<td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>{HACCOUNT_HOLDER2}</td>
+        <td><input type="text" size="40" name="accountholder2" value="{ACCOUNT_HOLDER2}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_IBAN2}</td>
+        <td><input type="text" size="40" name="bankiban2" value="{BANK_IBAN2}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_SWIFT2}</td>
+        <td><input type="text" size="40" name="bankswift2" value="{BANK_SWIFT2}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_BIC2}</td>
+        <td><input type="text" size="40" name="bankbic2" value="{BANK_BIC2}" /></td>
+    </tr>
+    <tr>
+        <td>{HBANK_NAME2}</td>
+        <td><input type="text" size="40" name="bankname2" value="{BANK_NAME2}" /></td>
+    </tr>
+</table>
+{JOMRESTOKEN}
+<input type="hidden" name="task" value="save_wire_transfer" />
+</form>
+</patTemplate:tmpl>
