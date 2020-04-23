@@ -1,0 +1,28 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<h2 class="page-header">{_JOMRES_JOOMLA_MENUMAKER_TITLE}</h2>
+<p>{_JOMRES_JOOMLA_MENUMAKER_INFO}</p>
+<form action="{JOMRES_SITEPAGE_URL}" method="post" name="adminForm" class="form-horizontal">
+<div class="control-group">
+	<div class="control-label">
+		{_JOMRES_JOOMLA_MENUMAKER_SEARCHTITLE}
+	</div>
+	<div class="controls">
+		<input type="text" name="menu_name" value="" class="input-medium"/>
+	</div>
+</div>
+<div class="control-group">
+	<div class="control-label">
+		{_JOMRES_JOOMLA_MENUMAKER_JOOMLA_MENU}
+	</div>
+	<div class="controls">
+		{MENUDROPDOWN}
+	</div>
+</div>
+<div class="form-actions">
+	<input type="submit" name="submit" value="{_JOMRES_JOOMLA_MENUMAKER_SAVE}" class="btn btn-primary" />
+</div>
+<input type="hidden" name="search_url" value="{SEARCH_URL}" />
+<input type="hidden" name="task" value="save_joomla_menu_maker" />
+<input type="hidden" name="option" value="com_jomres" />
+</form>
+</patTemplate:tmpl>
