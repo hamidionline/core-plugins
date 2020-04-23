@@ -1,0 +1,37 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+{JOMRES_POPUPURL_GLOBALVAR}
+<h2>{PAGETITLE}</h2>
+<patTemplate:tmpl name="rows" unusedvars="strip">
+	<table width="225" height="354" class="ui-widget-content ui-corner-all tiles-view float-left jomres_property_list_propertywrapper" border="0">
+		<tr class="ui-state-default">
+			<td width="100%" class="property-header">
+				<div class="half-column float-left align-left">{PROPERTY_TYPE}</div>
+				<div class="half-column float-right align-right">{STARS} {SUPERIOR}</div>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" align="center" width="100%">
+				<div class="property-title property-title-tiles"><a href="{MOREINFORMATIONLINK}">{PROPERTYNAME}</a>
+				</div>
+				<div class="plist-address">{TOWN}, {REGION}, {COUNTRY}</div>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" align="center">
+				<div class="property-image-medium"><a href="javascript: module_popup('{RANDOM_IDENTIFIER}',{UID});"><img src="{IMAGE}" alt="{PROPERTYNAME}"/></a></div>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" align="center">
+				<div class="ui-state-highlight ui-corner-all price-wrapper-tiles" align="center">
+					<div class="prices-from">{PRICE_PRE_TEXT}</div>
+					<div class="big-price">{PRICE_PRICE}</div>
+					<div class="prices-period">{PRICE_POST_TEXT}</div>
+				</div>
+			</td>
+		</tr>
+	</table>
+	<div id='module_{RANDOM_IDENTIFIER}_popup' style="display:none;" title="{PROPERTYNAME}"><img src="{LIVESITE}/{JOMRES_ROOT_DIRECTORY}/images/ajax_animation/broken_circle.gif"/></div>
+</patTemplate:tmpl>
+<div style="clear:both;"></div>
+</patTemplate:tmpl>
