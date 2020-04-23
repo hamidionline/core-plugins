@@ -1,0 +1,50 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<script type="text/javascript">
+	<!--
+	jomresJquery(document).ready(function () {
+		make_datatable('frontend_list_my_subscriptions', '{PAGETITLE}', '{LIVESITE}');
+	});
+	//-->
+</script>
+
+<h2 class="page-header">{PAGETITLE}</h2>
+
+<patTemplate:tmpl name="renewal_output" unusedvars="strip" type="simpleCondition" requiredVars="renewal_link">
+<div class="well">
+	<a href="{RENEWAL_LINK}" class="btn btn-primary"><i class="fa fa-refresh"></i> {RENEWAL_TEXT}</a>
+</div>
+</patTemplate:tmpl>
+
+<table id="frontend_list_my_subscriptions" width="100%" class="table table-striped">
+	<thead>
+	<tr>
+		<th>{HRENEW}</th>
+		<!--<th>ID</th>-->
+		<th>{HPACKAGE}</th>
+		<!--<th>{HDESCRIPTION}</th>-->
+		<th>{HRAISED_DATE}</th>
+		<th>{HEXPIRATION_DATE}</th>
+		<th>{HFULLAMOUNT}</th>
+		<th>{HSUBSCRIPTION_STATUS}</th>
+		<!--<th>{HINVOICE_ID}</th>-->
+		<th>{HPAYNOW}</th>
+	</tr>
+	</thead>
+	<tbody>
+	<patTemplate:tmpl name="rows" unusedvars="nbsp" type="simpleCondition" requiredVars="id">
+		<tr>
+			<td>{TOOLBAR}</td>
+			<!--<td>{ID}</td>-->
+			<td>{PACKAGE}</td>
+			<!--<td>{DESCRIPTION}</td>-->
+			<td>{RAISED_DATE}</td>
+			<td>{EXPIRATION_DATE}</td>
+			<td>{FULLAMOUNT}</td>
+			<td>{SUBSCRIPTION_STATUS}</td>
+			<!--<td>{INVOICE_ID}</td>-->
+			<td>{PAYNOW}</td>
+		</tr>
+	</patTemplate:tmpl>
+	</tbody>
+</table>
+</patTemplate:tmpl>
