@@ -1,0 +1,77 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<script type="text/javascript">
+
+var map;
+var markers = [];
+var locations = [];
+var curr_infw;
+
+jomresJquery(document).ready(function() {
+	var options = {
+	zoom: 2,
+	center: new google.maps.LatLng(0, 0),
+	mapTypeId: google.maps.MapTypeId.{MAPTYPE}
+	}
+	
+	<patTemplate:tmpl name="rows" type="simpleCondition" requiredVars="icon"  unusedvars="nbsp">
+	locations.push([{LAT},{LONG},'{POPUP}','{ICON}']);
+	</patTemplate:tmpl>
+	
+	map = new google.maps.Map(document.getElementById('mapview_canvas'), options);
+	for (var i = 0; i < locations.length; i++) {
+		makeMarker(locations[i]);
+		}
+	{GROUPMARKERS}
+	AutoCenter();
+	});
+	
+
+function makeMarker(location) {
+	var lat = location[0];
+	var long = location[1];
+	var content = location[2];
+	var icon = location[3];
+
+	var markerOptions = {
+		map: map, 
+		position: new google.maps.LatLng(lat,long),
+		icon : icon
+		};
+	var marker = new google.maps.Marker(markerOptions);
+	
+	var infowindow = new google.maps.InfoWindow({
+		content: content
+		});
+	google.maps.event.addListener(marker, 'click', function() {
+		if(curr_infw) { curr_infw.close();} // We check to see if there is an info window stored in curr_infw, if there is, we use .close() to hide the window
+		curr_infw = infowindow; // Now we put our new info window in to the curr_infw variable
+		infowindow.open(map, marker); // Now we open the window
+		});
+	markers.push(marker);
+	}
+
+function AutoCenter() {
+	var bounds = new google.maps.LatLngBounds();
+	jomresJquery.each(markers, function (index, marker) {
+		bounds.extend(marker.position);
+		});
+	map.fitBounds(bounds);
+	}
+
+jomresJquery(function(){
+	jomresJquery(".ui-button:not(.ui-state-disabled)")
+	.hover(
+		function(){ 
+			jomresJquery(this).addClass("ui-state-hover"); 
+		},
+		function(){ 
+			jomresJquery(this).removeClass("ui-state-hover"); 
+		}
+	)
+});
+</script>
+{HEADER}
+<div style="clear:both;"></div>
+<div id="mapview_canvas" style="width:{WIDTH}px;height:{HEIGHT}px; margin-top:10px;"></div>
+<div style="clear:both;"></div>
+</patTemplate:tmpl>
