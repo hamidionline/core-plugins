@@ -36,12 +36,12 @@ Flight::route('GET /cmf/property/securitydeposit/@id', function( $property_uid )
 		"method"=>"GET",
 		"request"=>"cmf/property/list/extras/".$property_uid,
 		"data"=>array(),
-		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') )
+		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
 		);
 	
 	$security_deposit = 0.0;
 	
-	$response = json_decode($call_self->call($elements));
+	$response = json_decode(stripslashes($call_self->call($elements)));
 	if ( isset ($response->data->response)) {
 		if (!empty($response->data->response)) {
 			foreach ($response->data->response as $extra ) {

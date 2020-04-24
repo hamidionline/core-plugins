@@ -37,10 +37,10 @@ Flight::route('GET /cmf/property/price/@property_uid/@start_date/@end_date/@numb
 		"method"=>"GET",
 		"request"=>"cmf/property/availability/blocks/".$property_uid."/".$start_date."/".$end_date,
 		"data"=>array(),
-		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') )
+		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
 		);
 	
-	$blocks = json_decode($call_self->call($elements));
+	$blocks = json_decode(stripslashes($call_self->call($elements)));
 	
 	$potential_booking_date_ranges = array_keys (cmf_utilities::get_date_ranges( $start_date , $end_date ));
 	if (!empty($blocks->data->response)) {
@@ -55,10 +55,10 @@ Flight::route('GET /cmf/property/price/@property_uid/@start_date/@end_date/@numb
 		"method"=>"GET",
 		"request"=>"cmf/property/list/prices/".$property_uid,
 		"data"=>array(),
-		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') )
+		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
 		);
 	
-	$prices = json_decode($call_self->call($elements));
+	$prices = json_decode(stripslashes($call_self->call($elements)));
 	
 	if (!isset($prices->data->response)) {
 		Flight::halt(204, "Cannot get prices for property");
@@ -68,10 +68,10 @@ Flight::route('GET /cmf/property/price/@property_uid/@start_date/@end_date/@numb
 		"method"=>"GET",
 		"request"=>"cmf/property/list/tariff/types/dates/".$property_uid,
 		"data"=>array(),
-		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') )
+		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
 		);
 	
-	$tariff_type_dates = json_decode($call_self->call($elements));
+	$tariff_type_dates = json_decode(stripslashes($call_self->call($elements)));
 	
 	if (!isset($tariff_type_dates->data->response->tariff_sets) || empty($tariff_type_dates->data->response->tariff_sets) ) {
 		Flight::halt(204, "Cannot get tariff type dates for property");

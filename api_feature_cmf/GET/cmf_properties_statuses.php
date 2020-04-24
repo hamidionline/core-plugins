@@ -31,10 +31,10 @@ Flight::route('GET /cmf/properties/statuses', function()
 		"method"=>"GET",
 		"request"=>"cmf/list/property/statuses/",
 		"data"=>array(),
-		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') )
+		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
 		);
 	
-	$property_statuses_texts = json_decode($call_self->call($elements));
+	$property_statuses_texts = json_decode(stripslashes($call_self->call($elements)));
 	
 	 $property_status_texts_array = array();
 	if ( isset($property_statuses_texts->data->response)) {
