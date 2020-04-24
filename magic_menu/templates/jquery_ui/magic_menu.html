@@ -1,0 +1,31 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<h2>{_JOMRES_MAGIC_MENUS_TITLE}</h2>
+<p>{_JOMRES_MAGIC_MENUS_INFO}</p>
+<form action="{JOMRES_SITEPAGE_URL_NOSEF}" method="post" name="adminForm">
+<table width="100%" border="0" class="ui-widget-content ui-corner-all">
+	<tr>
+		<td width="30%"><strong>{_JOMRES_MAGIC_MENUS_SEARCHTITLE}</strong></td>
+		<td><input type="text" name="menu_name" value="" size="40" /></td>
+	</tr>
+	<tr>
+		<td width="30%"><strong>{_JOMRES_MAGIC_MENUS_MENU_SECTION}</strong></td>
+		<td><input type="text" name="section_name" value="" size="40" /></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			 ({_JOMRES_MAGIC_MENUS_MENU_SECTION_INFO})
+		</td>
+	</tr>
+	<tr>
+		<td><strong>{_JOMRES_MAGIC_MENUS_RAW}</strong></td>
+		<td>{SEARCH_URL}</td>
+	</tr>
+	<tr>
+		<td colspan="2"><input type="submit" name="submit" value="{_JOMRES_MAGIC_MENUS_SAVE}" class="fg-button ui-state-default ui-corner-all" /></td>
+	</tr>
+</table>
+<input type="hidden" name="search_url" value="{SEARCH_URL}" />
+<input type="hidden" name="task" value="save_magic_menu" />
+<input type="hidden" name="option" value="com_jomres" />
+</form>
+</patTemplate:tmpl>
