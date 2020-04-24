@@ -1,0 +1,59 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="nbsp">
+<script language="JavaScript" type="text/javascript">
+jomresJquery(document).ready(function() {
+	var oTable = jomresJquery('#admin_list_locations').dataTable({
+		"bJQueryUI": true,
+		"bStateSave": true,
+		"sPaginationType": "full_numbers",
+		"sDom": '<"H"lTfr>t<"F"ip>',
+		"oTableTools": {
+			"sSwfPath": "{LIVESITE}/{JOMRES_ROOT_DIRECTORY}/javascript/copy_cvs_xls_pdf.swf",
+			"aButtons": [
+				"copy",
+				{
+				"sExtends": "csv",
+				"sCharSet": "utf8"
+				},
+				{
+				"sExtends": "xls",
+				"sCharSet": "utf16le"
+				},
+				{
+				"sExtends": "pdf",
+				"sCharSet": "utf8",
+				"sPdfOrientation": "landscape",
+				"sTitle": "{PAGETITLE}"
+				},
+				"print"
+			]
+		}
+	});
+} );
+</script>
+<h2>{PAGETITLE}</h2>
+
+<table id="admin_list_locations" width="100%">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th>{_JOMRES_COM_MR_VRCT_PROPERTY_HEADER_TOWN}</th>
+			<th>{_JOMRES_COM_MR_VRCT_PROPERTY_HEADER_REGION}</th>
+			<th>{_JOMRES_COM_MR_VRCT_PROPERTY_HEADER_COUNTRY}</th>
+			<th>{_JOMRES_LOCATION_STATION_INFORMATION}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<patTemplate:tmpl name="rows" unusedvars="nbsp">
+		<tr>
+			<td>{EDITLINK}</td>
+			<td>{TOWN}</td>
+			<td>{REGION}</td>
+			<td>{COUNTRY_NAME}</td>
+			<td>{LOCATION_INFORMATION}</td>
+		</tr>
+		</patTemplate:tmpl>
+	</tbody>
+</table>
+<!--<input type="hidden" name="task" value="edit_invoice" />
+</form>-->
+</patTemplate:tmpl>
