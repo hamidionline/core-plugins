@@ -51,7 +51,6 @@ jr_define('CHANNELMANAGEMENT_FRAMEWORK_PROPERTY_IMPORTING_THISJRUSER_OBJECT_NOT_
 jr_define('CHANNELMANAGEMENT_FRAMEWORK_PROPERTY_IMPORTING',"Starting import of property ");
 jr_define('CHANNELMANAGEMENT_FRAMEWORK_PROPERTY_IMPORTED',"Successfully imported property ");
 jr_define('CHANNELMANAGEMENT_FRAMEWORK_PROPERTY_IMPORT_FAILED',"Failed to import property ");
-jr_define('CHANNELMANAGEMENT_FRAMEWORK_PROPERTY_IMPORT_ALL_IMPORTED',"No properties to import, all available properties have already been imported to this site.");
 
 jr_define('CHANNELMANAGEMENT_FRAMEWORK_PROPERTY_IMPORT',"Import all properties");
 jr_define('CHANNELMANAGEMENT_FRAMEWORK_PROPERTY_IMPORT_ONE',"Import property");
