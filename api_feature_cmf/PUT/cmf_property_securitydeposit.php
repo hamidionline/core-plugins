@@ -54,10 +54,10 @@ Flight::route('PUT /cmf/property/securitydeposit', function()
 		"method"=>"GET",
 		"request"=>"cmf/property/list/extras/".$property_uid,
 		"data"=>array(),
-		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') )
+		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
 		);
 	
-	$response = json_decode($call_self->call($elements));
+	$response = json_decode(stripslashes($call_self->call($elements)));
 	if ( isset ($response->data->response)) {
 		if (!empty($response->data->response)) {
 			foreach ($response->data->response as $extra ) {
@@ -66,10 +66,10 @@ Flight::route('PUT /cmf/property/securitydeposit', function()
 					"method"=>"DELETE",
 					"request"=>"cmf/property/extra/".$property_uid."/".$extra->id,
 					"data"=>array(),
-					"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') )
+					"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
 					);
 				
-				$response = json_decode($call_self->call($elements));
+				$response = json_decode(stripslashes($call_self->call($elements)));
 				// Todo add a check for success
 				}
 			}
@@ -98,10 +98,10 @@ Flight::route('PUT /cmf/property/securitydeposit', function()
 			'model_params'					=> $model_params,
 			'model_force'					=> $model_force
 			),
-		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') )
+		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
 		);
 	
-	$response = json_decode($call_self->call($elements));
+	$response = json_decode(stripslashes($call_self->call($elements)));
 	
 	$result = false;
 	if ( isset($response->data->response->extra_id) && (int)$response->data->response->extra_id > 0 ) {
