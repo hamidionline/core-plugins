@@ -1,4 +1,3 @@
-==============================================
 Trigger aide-memoire
 
 2NNNN Reserved range for Jomres channel manager related functionality (excluding Beds24)
