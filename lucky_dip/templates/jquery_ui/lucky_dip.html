@@ -1,0 +1,56 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<style type="text/css">
+.element_button {
+    min-width: 120px;
+    max-width: 180px;
+	text-align: left;
+}
+</style>
+<h2>{_JOMRES_TAGS_LUCKY_DIP}</h2>
+<p>{_JOMRES_TAGS_LUCKY_DIP_INFO}</p>
+<form action="{JOMRES_SITEPAGE_URL_NOSEF}" method="post" id="lucky_dip" name="adminform">
+	<table class="ui-widget-content ui-corner-all">
+		<tr>
+			<td width="30%">{_JOMRES_TAGS_LUCKY_DIP_COST}</td>
+			<td>{CURRENCY_SYMBOL_PRE} <input type="text" name="cost" placeholder="{_JOMRES_TAGS_LUCKY_DIP_COST_PLACEHOLDER}" value="{COST}" /> {CURRENCY_SYMBOL_POST}</td>
+		</tr>
+		<tr>
+			<td>Features</td>
+			<td>
+				<patTemplate:tmpl name="rows" unusedvars="strip">
+				<label class="btn element_button {ACTIVE}" id="button_luckydip_feature_{ID}" for="luckydip_feature_{ID}" onClick="toggle_button_class(this)">{FEATURE_ABBV}</label><input type="checkbox" {CHECKED} class="hidden" id="luckydip_feature_{ID}" name="luckydip_features[]" value="{ID}" autocomplete=off /> 
+				</patTemplate:tmpl>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<button type="submit" class="fg-button ui-state-default ui-corner-all">{COMMON_SUBMIT}</button>
+			</td>
+		</tr>
+	</table>
+<input type="hidden" name="task" value="lucky_search" />
+<input type="hidden" name="option" value="com_jomres" />
+
+</form>
+<br />
+<script>
+jomresJquery(function(jomresJquery) {
+	jomresJquery('div.btn-group[data-toggle-name="*"]').each(function(){
+		var group   = jomresJquery(this);
+		var form    = group.parents('form').eq(0);
+		var name    = group.attr('data-toggle-name');
+		var hidden  = jomresJquery('input[name="' + name + '"]', form);
+		jomresJquery('button', group).each(function(){
+			var button = jomresJquery(this);
+			button.live('click', function(){
+				hidden.val(jomresJquery(this).val());
+				});
+			if(button.val() == hidden.val()) {
+				button.addClass('btn-primary active');
+			  }
+			});
+		});
+	});
+</script>
+
+</patTemplate:tmpl>

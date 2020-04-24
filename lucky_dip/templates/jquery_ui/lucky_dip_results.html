@@ -1,0 +1,29 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="strip">
+<style type="text/css">
+.luckydip_listings{width:100%;float:left;margin-bottom:10px;}
+.luckydip_listings_image{width:125px;float:left;border:5px solid #fff;-moz-border-radius:5px;-webkit-border-radius:5px;-khtml-border-radius:5px;border-radius:5px;}
+.luckydip_listings_details{/*float:right;width:355px;*/}
+.luckydip_listings_title{font-size:14px;font-weight:bold;padding-top:10px;}
+.luckydip_listings_address{margin:0;font-size:11px;}
+.luckydip_listings_moreinfo{margin:8px;font-weight:bold;text-align:right;float:right;}
+</style>
+{FORM}
+<div class="alert">{_JOMRES_TAGS_LUCKY_DIP_NOTE_GUESSTIMATE}</div>
+{NO_COST}
+<h3>{_JOMRES_TAGS_LUCKY_DIP_COST_YOUENTERED} {COST}.</h3>
+<patTemplate:tmpl name="rows" unusedvars="strip">
+<p>{_JOMRES_TAGS_LUCKY_DIP_RESULT_1} <a href = "{URL}">{PROPERTY_NAME}</a> {_JOMRES_TAGS_LUCKY_DIP_RESULT_2} <strong>{NIGHTS} {_JOMRES_TAGS_LUCKY_DIP_RESULT_3}</strong></p>
+<div class="ui-corner-all ui-helper-clearfix">
+	<div id="luckydip_listings_container">
+		<div class="luckydip_listings ui-widget-content ui-corner-all">
+			<div class="luckydip_listings_image"><a href="{URL}"><img src="{IMAGETHUMB}" width="125" height="94" /></a></div>
+			<div class="luckydip_listings_details">
+				<div class="luckydip_listings_title">{PROPERTY_NAME}</div>
+				<div class="luckydip_listings_address">{_JOMRES_TAGS_LUCKY_DIP_RESULT_RELEVANT_FEATURES} {FEATURES}</div>
+				<div class="luckydip_listings_moreinfo"><a href="{URL}" class="fg-button ui-state-default ui-corner-all">{MOREINFORMATION}</a></div>
+			</div>
+		</div>
+	</div>
+</div>
+</patTemplate:tmpl>
+</patTemplate:tmpl>
