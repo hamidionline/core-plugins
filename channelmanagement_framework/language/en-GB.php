@@ -4,7 +4,7 @@
 * @author Woollyinwales IT <sales@jomres.net>
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2019 Woollyinwales IT
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -74,6 +74,7 @@ jr_define('CHANNELMANAGEMENT_FRAMEWORK_DASHBOARD_LIST_PROPERTIES_DELETE_LOCAL_PR
 
 jr_define('CHANNELMANAGEMENT_FRAMEWORK_MENUITEM_DASHBOARD',"Dashboard");
 jr_define('CHANNELMANAGEMENT_FRAMEWORK_MENUITEM_ACCOUNTS',"Channel accounts");
-jr_define('CHANNELMANAGEMENT_FRAMEWORK_MENUITEM_CONFIGURATION',"Configuration");
 
 jr_define('CHANNELMANAGEMENT_FRAMEWORK_THIN_CHANNELS_NOT_INSTALLED',"There are no thin channel plugins installed, you cannot use this feature yet.");
+
+jr_define('CHANNELMANAGEMENT_FRAMEWORK_DASHBOARD_INFO',"Unassigned properties that you manage can be assigned to a channel. If you change the channel you are giving any channel with valid API access ");
