@@ -4,7 +4,7 @@
 * @author  John m_majma@yahoo.com
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2017
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -76,10 +76,28 @@ Flight::route('POST /cmf/property', function()
 	
 	
 	$jomres_properties->commit_new_property();
-	if ($jomres_properties->propertys_uid > 0 )  {  // Ok, the property has been created successfully, we'll add the property id and the channel and the remote property id to 
-		
+
+	if ($jomres_properties->propertys_uid > 0 )  {  // Ok, the property has been created successfully, we'll add the property id and the channel and the remote property id too
+
+		// Before we can do anything else, we need to link the property to the channel
 		$query = "INSERT INTO `#__jomres_channelmanagement_framework_property_uid_xref` ( `channel_id`, `property_uid`, `remote_property_uid`, `cms_user_id`, `remote_data`) VALUES ( ".Flight::get('channel_id')." , ".$jomres_properties->propertys_uid." , ".$remote_uid.", ".(int)$thisJRUser->userid." , NULL)" ;
 		doInsertSql($query);
+
+		// Finally we'll ensure that api privacy is enabled and managers will be prevented from administering locally
+		$settings = array();
+		$settings['api_privacy_off'] = "0";							// By default API privacy is on although channels and managers can disable it
+		$settings['allow_channel_property_local_admin'] = "0";		// Managers cannot administer properties locally, they'll be presented with the remote admin url
+
+		$elements = array(
+			"method"=>"PUT",
+			"request"=>"cmf/property/settings",
+			"data"=>array ("property_uid" => $jomres_properties->propertys_uid , "params" => json_encode($settings)),
+			"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
+		);
+
+		$call_self = new call_self( );
+		$setting_response = $call_self->call($elements);
+
 	} else {
 		Flight::halt(204, "Failed to create property");
 	}
