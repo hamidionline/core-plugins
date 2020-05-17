@@ -1,0 +1,19 @@
+<patTemplate:tmpl name="pageoutput" unusedvars="nbsp">
+<h2>{PAGETITLE}</h2>
+<p class="ui-state-highlight">{NOTES}</p>
+<form action="{JOMRES_SITEPAGE_URL_ADMIN}" method="post" name="adminForm">
+{JOMRESTOOLBAR}
+<table class="ui-widget-content ui-corner-all" border="0" width="100%">
+	<tr>
+		<td width="30%">{HCHOOSEPROPERTY}</td>
+		<td>{PROPERTYSDROPDOWN}</td>
+    </tr>
+    <tr>
+		<td>{HNEWNAME}</td>
+		<td><input type="text" name="newname" value="Change me" /></td>
+	</tr>
+</table>
+<input type="hidden" name="task" value="clone_property" />
+{CSRF_TOKEN}
+</form>
+</patTemplate:tmpl>
