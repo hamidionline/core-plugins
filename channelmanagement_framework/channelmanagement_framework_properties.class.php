@@ -4,7 +4,7 @@
 * @author Woollyinwales IT <sales@jomres.net>
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2019 Woollyinwales IT
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -26,16 +26,17 @@ class channelmanagement_framework_properties
 		// Normally we'd do this as a query to the local server, however the properties/ids endpoint can't return the remote_data for all properties so instead we'll run the query here
 
 		if ( (int)$channel_id == 0 ) {
-			throw new Exception( '$channel_id not set' );
+			$query = "SELECT `property_uid` , `remote_property_uid` , `remote_data` FROM #__jomres_channelmanagement_framework_property_uid_xref";
+		} else {
+			$query = "SELECT `property_uid` , `remote_property_uid` , `remote_data` FROM #__jomres_channelmanagement_framework_property_uid_xref WHERE `channel_id` = ".(int)$channel_id;
 		}
 
-		$query = "SELECT `property_uid` , `remote_property_uid` , `remote_data` FROM #__jomres_channelmanagement_framework_property_uid_xref WHERE `channel_id` = ".(int)$channel_id;
 		$properties = doSelectSql($query);
 
 		$property_uids = array();
 		if (!empty($properties)) {
 			foreach ($properties as $property ) {
-				$property_uids[] = array ( "local_property_uid" => $property->property_uid , "remote_property_uid" => $property->remote_property_uid ,  "remote_data" => unserialize($property->remote_data));
+				$property_uids[] = array ( "local_property_uid" => $property->property_uid , "remote_property_uid" => $property->remote_property_uid ,  "remote_data" => unserialize(base64_decode($property->remote_data)));
 			}
 		}
 		return $property_uids;

@@ -4,7 +4,7 @@
 * @author Woollyinwales IT <sales@jomres.net>
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2019 Woollyinwales IT
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -51,6 +51,23 @@ class channelmanagement_framework_channels
 					"channel_name" => $channel->channel_name,
 					"cms_user_id" => $channel->cms_user_id,
 					"params" => ''
+				);
+			}
+		}
+		return $channels;
+	}
+
+	function get_all_channels_ids()
+	{
+		$query = " SELECT id , channel_name FROM #__jomres_channelmanagement_framework_channels ";
+		$result = doSelectSql($query);
+
+		$channels = array();
+		if (!empty($result)) {
+			foreach ( $result as $channel) {
+				$channels[$channel->channel_name][] = array (
+					"id" => $channel->id,
+					"channel_name" => $channel->channel_name
 				);
 			}
 		}

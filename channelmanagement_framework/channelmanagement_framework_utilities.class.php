@@ -4,7 +4,7 @@
 * @author Woollyinwales IT <sales@jomres.net>
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2019 Woollyinwales IT
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -20,6 +20,90 @@ class channelmanagement_framework_utilities
 	function __construct()
 	{
 		
+	}
+
+	/*
+	*
+	* Set cross references for a given item type (e.g. extras) for a property
+	*
+	* Send the property uid and the item type, retrieve all remote item ids. Used by scripts that create, update and delete items imported from parents
+	*
+	*/
+	public static function set_cross_references_for_property_uid ( $channel = '' , $property_uid = 0 , $item_type = '' , $remote_id = 0 , $local_id = 0 )
+	{
+		if (!isset($property_uid) || $property_uid == 0 ) {
+			throw new Exception( "Property uid not set" );
+		}
+
+		if (!isset($item_type) || $item_type == '' ) {
+			throw new Exception( "Item type not set" );
+		}
+
+		if (!isset($channel) || $channel == '' ) {
+			throw new Exception( "Channel not set" );
+		}
+
+		if (!isset($remote_id) || $remote_id == 0 ) {
+			throw new Exception( "Remote id not set" );
+		}
+
+		$put_data = array (
+			"property_uid" 			=> $property_uid,
+			"item_type" 			=> $item_type,
+			"remote_id" 			=> $remote_id,
+			"local_id" 				=> $local_id
+		);
+
+		$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $property_uid );
+
+		jr_import('jomres_call_api');
+		$jomres_call_api = new jomres_call_api('system');
+		$send_response = $jomres_call_api->send_request(
+			"PUT"  ,
+			"cmf/property/cross/reference" ,
+			$put_data ,
+			array (	"X-JOMRES-channel-name: ". $channel, "X-JOMRES-proxy_id: ".$manager_id )
+		);
+	}
+
+	/*
+	*
+	* Get cross references for a given item type (e.g. extras) for a property
+	*
+	* Send the property uid and the item type, retrieve all remote item ids. Used by scripts that create, update and delete items imported from parents
+	*
+	*/
+	public static function get_cross_references_for_property_uid ( $channel = '' , $property_uid = 0 , $item_type = '' )
+	{
+		if (!isset($property_uid) || $property_uid == 0 ) {
+			throw new Exception( "Property uid not set" );
+		}
+
+		if (!isset($item_type) || $item_type == '' ) {
+			throw new Exception( "Item type not set" );
+		}
+
+		if (!isset($channel) || $channel == '' ) {
+			throw new Exception( "Channel not set" );
+		}
+
+		$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $property_uid );
+
+		jr_import('jomres_call_api');
+		$jomres_call_api = new jomres_call_api('system');
+		$send_response = $jomres_call_api->send_request(
+			"GET"  ,
+			"cmf/property/".$property_uid ,
+			[] ,
+			array (	"X-JOMRES-channel-name: ". $channel, "X-JOMRES-proxy_id: ".$manager_id )
+		);
+
+		if (isset($send_response->data->response->remote_data->cross_references->$item_type)) {
+			return json_decode(json_encode($send_response->data->response->remote_data->cross_references->$item_type), true);
+		} else {
+			return [];
+		}
+
 	}
 
 	public static function get_channel_ids_for_channel_name ( $channel_name = '' )
@@ -41,6 +125,31 @@ class channelmanagement_framework_utilities
 	}
 
 	/*
+	*
+	* Used by changelog scripts that want to update a local property
+	*
+	*/
+	public static function get_manager_id_for_property_uid ($property_uid)
+	{
+		$channelmanagement_framework_user_accounts = new channelmanagement_framework_user_accounts();
+		// We need to find the manager's uid so that we can send the call to the local system
+		$manager_accounts = $channelmanagement_framework_user_accounts->find_channel_owners_for_property($property_uid);
+
+		if (empty($manager_accounts)) {
+			throw new Exception( "Tried to get manager id however no managers exist to enable access to API");
+		}
+
+		reset($manager_accounts);
+		$manager_id = key($manager_accounts);
+		if ($manager_id == 0 ) {
+			throw new Exception( "Manager id is 0");
+		}
+
+		return $manager_id;
+	}
+
+
+	/*
 	 *
 	 * Mark a changelog item completed
 	 *
@@ -52,14 +161,28 @@ class channelmanagement_framework_utilities
 		}
 
 		$query = "UPDATE #__jomres_channelmanagement_framework_changelog_queue_items SET
-						 `completed` = 1, 
+						 `completed` = 1
 						 WHERE 
-						 `id` = ".$item_id." 
+						 `id` = ".(int)$item_id." 
 						 LIMIT 1
 						 ";
 		doInsertSql($query);
 	}
 
+	public static function increment_attempts ( $item_id = 0  )
+	{
+		if ( !isset($item_id ) || (int)$item_id == 0 ) {
+			throw new Exception( "item_id not set" );
+		}
+
+		$query = "UPDATE #__jomres_channelmanagement_framework_changelog_queue_items SET
+						 attempts = attempts + 1
+						 WHERE 
+						 `id` = ".(int)$item_id." 
+						 LIMIT 1
+						 ";
+		doInsertSql($query);
+	}
 /*
  *
  * Get changelog queue items to be processed by 27410 scripts
@@ -71,7 +194,7 @@ class channelmanagement_framework_utilities
 			throw new Exception( "property_uid not set" );
 		}
 
-		$query = "SELECT id ,`channel_name`, `property_uid`, `unique_id`, `date_added`, `completed`, `item`  FROM #__jomres_channelmanagement_framework_changelog_queue_items WHERE property_uid = ".(int)$property_uid.' ORDER BY id';
+		$query = "SELECT id ,`channel_name`, `property_uid`, `unique_id`, `date_added`, `completed`, `attempts` , `item`  FROM #__jomres_channelmanagement_framework_changelog_queue_items WHERE property_uid = ".(int)$property_uid.' ORDER BY id';
 		return doSelectSql($query );
 	}
 
@@ -82,7 +205,7 @@ class channelmanagement_framework_utilities
 	 */
 	public static function get_queue_items ( )
 	{
-		$query = "SELECT id ,`channel_name`, `property_uid`, `unique_id`, `date_added`, `completed`, `item`  FROM #__jomres_channelmanagement_framework_changelog_queue_items WHERE completed = 0 ";
+		$query = "SELECT id ,`channel_name`, `property_uid`, `unique_id`, `date_added`, `completed`, `attempts` , `item`  FROM #__jomres_channelmanagement_framework_changelog_queue_items";
 		return doSelectSql($query );
 	}
 
@@ -122,7 +245,7 @@ class channelmanagement_framework_utilities
 		$query = "SELECT unique_id FROM #__jomres_channelmanagement_framework_changelog_queue_items WHERE unique_id = '".$item['unique_id']."' LIMIT 1";
 		$result = doSelectSql($query , 1 );
 
-		if ( empty($result) ) {
+		if ( empty($result) || $result == false ) {
 			$query = "INSERT INTO #__jomres_channelmanagement_framework_changelog_queue_items
 						(
 						`channel_name`,

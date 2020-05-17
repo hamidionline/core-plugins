@@ -4,7 +4,7 @@
 * @author Woollyinwales IT <sales@jomres.net>
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2019 Woollyinwales IT
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 // ################################################################
@@ -34,10 +34,8 @@ class j06002channelmanagement_framework_mainmenu {
 		
 		$menu_sections = array();
 
-		$menu_items = array();
 		$menu_sections[]= array ( "TEXT" => jr_gettext('CHANNELMANAGEMENT_FRAMEWORK_MENUITEM_DASHBOARD','CHANNELMANAGEMENT_FRAMEWORK_MENUITEM_DASHBOARD',false) , "TASK" => "channelmanagement_framework");
 		$menu_sections[]= array ( "TEXT" => jr_gettext('CHANNELMANAGEMENT_FRAMEWORK_MENUITEM_ACCOUNTS','CHANNELMANAGEMENT_FRAMEWORK_MENUITEM_ACCOUNTS',false) , "TASK" => "channelmanagement_framework_user_accounts");
-		//$menu_sections[] = $menu_items;
 
 		$pageoutput[] = $output;
 		$tmpl = new patTemplate();

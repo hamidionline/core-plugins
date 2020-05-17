@@ -4,7 +4,7 @@
 * @author Woollyinwales IT <sales@jomres.net>
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2019 Woollyinwales IT
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 // ################################################################
@@ -96,6 +96,10 @@ class j06002channelmanagement_framework_user_accounts {
 			}
 		}
 
+		if (empty($rows)) {
+			$msg = "No channels require account information";
+			jomresRedirect(jomresURL(JOMRES_SITEPAGE_URL.'&task=channelmanagement_framework'), $msg );
+		}
 		$output = array();
 		$pageoutput = array();
 
