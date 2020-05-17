@@ -4,7 +4,7 @@
 * @author  John m_majma@yahoo.com
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2017
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -56,6 +56,9 @@ Flight::route('GET /cmf/admin/list/channels', function()
 	if (!empty($result)) {
 		foreach ($result as $channel) {
 			$id = $channel->id;
+			if ( !isset($property_managers[$channel->cms_user_id])) {
+				$property_managers[$channel->cms_user_id]['username'] = "MANAGER NO LONGER EXISTS";
+			}
 
 			$channels[$id] = array (
 				"id"						=> $channel->id , 

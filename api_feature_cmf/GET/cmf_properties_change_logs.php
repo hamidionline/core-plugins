@@ -19,7 +19,7 @@ defined( '_JOMRES_INITCHECK' ) or die( '' );
 */
 
 
-Flight::route('GET /cmf/property/change/log/@property_uid', function( $property_uid )
+Flight::route('GET /cmf/properties/change/logs/', function()
 	{
     require_once("../framework.php");
 
@@ -27,14 +27,32 @@ Flight::route('GET /cmf/property/change/log/@property_uid', function( $property_
 	
 	cmf_utilities::validate_channel_for_user();  // If the user and channel name do not correspond, then this channel is incorrect and can go no further, it'll throw a 204 error
 
-	$property_uid			= (int)$property_uid;
+	$call_self = new call_self( );
+	$elements = array(
+		"method"=>"GET",
+		"request"=>"cmf/properties/ids",
+		"data"=>array(),
+		"headers" => array ( Flight::get('channel_header' ).": ".Flight::get('channel_name') , "X-JOMRES-proxy_id: ".Flight::get('user_id') )
+	);
 
-	cmf_utilities::validate_property_uid_for_user($property_uid);
+	$response = json_decode(stripslashes($call_self->call($elements)));
 
-	$query = 'SELECT id , property_uid , user_performing_action , channel_data , date_added , webhook_event_title ,webhook_event 
-		FROM #__jomres_webhook_events WHERE property_uid = '.$property_uid.' 
+	if ( !isset($response->data->response) || !is_array($response->data->response) || empty($response->data->response) ) {
+		Flight::halt(204, "Cannot get manager's properties" );
+	}
+
+	$property_ids = array();
+	foreach ($response->data->response as $property ) {
+		$property_ids[] = $property->local_property_uid;
+	}
+
+
+
+	$query = 'SELECT id , property_uid , user_performing_action , channel_data , date_added , webhook_event_title ,webhook_event FROM #__jomres_webhook_events WHERE 
+		property_uid IN ('.jomres_implode($property_ids).') 
 		AND date_added BETWEEN date_sub(now(),INTERVAL 2 WEEK) AND now() 
 		ORDER BY id ASC';
+
 	$events_list = doSelectSql($query);
 
 	$events = array();
@@ -43,12 +61,12 @@ Flight::route('GET /cmf/property/change/log/@property_uid', function( $property_
 		$count = count($events_list);
 		for ( $i = 0 ; $i < $count ; $i++ ) {
 			$event = $events_list[$i];
-			$events[] = array (
+
+			$events[$event->property_uid][] = array (
 				"event_id" => $event->id,
 				"property_uid" => $event->property_uid,
 				"user_id" => $event->user_performing_action,
 				"action" => $event->webhook_event_title,
-				"unique_id" => $event->unique_id,
 				"date" => $event->date_added,
 				"user_id" => $event->user_performing_action,
 				"webhook_event" => unserialize($event->webhook_event),
