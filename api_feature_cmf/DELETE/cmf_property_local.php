@@ -4,7 +4,7 @@
 * @author  John m_majma@yahoo.com
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2017
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -43,7 +43,6 @@ Flight::route('DELETE /cmf/property/local/@id', function($property_uid)
 			logging::log_message('Failed to delete property, response message '.$e->getMessage(), 'CMF', 'WARNING');
 		}
 
-		
 		$query = "DELETE FROM #__jomres_channelmanagement_framework_property_uid_xref WHERE `cms_user_id` = ".(int)Flight::get('user_id')." AND `channel_id` = ".(int) Flight::get('channel_id')." AND `property_uid` = ".(int) $property_uid;
 		$success = doInsertSql($query);
 
@@ -52,6 +51,13 @@ Flight::route('DELETE /cmf/property/local/@id', function($property_uid)
 		} else {
 			$response = false;
 		}
+
+		$query = "DELETE FROM #__channelmanagement_framework_changelog_queue_items WHERE `property_uid` = ".(int) $property_uid;
+		doInsertSql($query);
+
+		$query = "DELETE FROM #__jomres_channelmanagement_framework_bookings_xref WHERE `property_uid` =". (int) $property_uid;
+		$success = doInsertSql($query);
+
 	} else {
 		$response = false;
 	}
