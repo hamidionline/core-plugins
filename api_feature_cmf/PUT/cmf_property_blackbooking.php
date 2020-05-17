@@ -4,7 +4,7 @@
 * @author  John m_majma@yahoo.com
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2017
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -77,9 +77,9 @@ Flight::route('PUT /cmf/property/blackbooking', function()
 	$bkg->property_uid			= $property_uid;
 	$bkg->arrival				= date( "Y/m/d" , strtotime($dates_unavailable->date_from));
 	$bkg->departure				= date( "Y/m/d" , strtotime($dates_unavailable->date_to." +1 day"));
-	$bkg->room_uids = $rooms_to_block;
-	$bkg->special_reqs = '';
-	$bkg->booking_number = $remote_booking_id;
+	$bkg->room_uids				= $rooms_to_block;
+	$bkg->special_reqs			= '';
+	$bkg->booking_number		= $remote_booking_id;
 
 	if ( $bkg->create_black_booking() ) {
 		$response = array ( "success" => true , "contract_id" => $bkg->contract_uid );

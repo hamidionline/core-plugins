@@ -18,7 +18,7 @@ Return the items for a given property type (e.g. property types) that currently 
 
 */
 
-Flight::route('PUT /cmf/admin/channel/assign/properties', function()
+Flight::route('PUT /cmf/admin/channel/unassign/properties', function()
 	{
     require_once("../framework.php");
 
@@ -46,33 +46,35 @@ Flight::route('PUT /cmf/admin/channel/assign/properties', function()
 			$existing_channel_properties[$property->property_uid] = $property->channel_id;
 		}
 	}
-	
-	$properties_to_assign = array();
-	$unsuccessful_assignments = array();
+
+	$properties_to_unassign = array();
+	$unsuccessful_unassignments = array();
 	
 	foreach ($properties as $property) {
-		if ( array_key_exists( $property->property_uid , $existing_channel_properties) ) {
-			$unsuccessful_assignments[] = $property ;
+
+
+		if ( !array_key_exists( $property->property_uid , $existing_channel_properties) ) {
+			$unsuccessful_unassignments[] = $property ;
 		} else {
-			$properties_to_assign[] = $property;
+			$properties_to_unassign[] = $property;
 		}
 	}
 
-	$successful_assignments = array();
+	$successful_unassignments = array();
 	
 
-	if (!empty($properties_to_assign)) {
-		foreach ($properties_to_assign as $property ) {
-			$query = "INSERT INTO #__jomres_channelmanagement_framework_property_uid_xref ( channel_id , property_uid , remote_property_uid , cms_user_id ) VALUES ( ".(int)$property->channel_id." ,".(int)$property->property_uid." ,".(int)$property->remote_property_uid." ,".(int)$property->cms_user_id." )";
+	if (!empty($properties_to_unassign)) {
+		foreach ($properties_to_unassign as $property ) {
+			$query = "DELETE FROM #__jomres_channelmanagement_framework_property_uid_xref WHERE property_uid = ".(int)$property->property_uid." LIMIT 1 ";
 			if (doInsertSql($query)) {
-				$successful_assignments[] = $property;
+				$successful_unassignments[] = $property;
 			}
 		}
 	}
 	
 	// 
 	
-	$response = array ( "unsuccessful_assignments" => $unsuccessful_assignments , "successful_assignment" => $successful_assignments );
+	$response = array ( "unsuccessful_unassignments" => $unsuccessful_unassignments , "successful_unassignment" => $successful_unassignments );
 	
 	Flight::json( $response_name = "response" , $response ); 
 	});
