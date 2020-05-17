@@ -4,7 +4,7 @@
 * @author Woollyinwales IT <sales@jomres.net>
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2019 Woollyinwales IT
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -44,23 +44,31 @@ class cmf_utilities
 	public static function validate_channel_for_user( $channel_name = '' )
 	{
 		$all_headers = getallheaders();
-		
-		if (isset($all_headers['X-JOMRES-channel-name'])) {
-			$channel_name = filter_var($all_headers['X-JOMRES-channel-name'], FILTER_SANITIZE_SPECIAL_CHARS);
+
+		if (!empty($all_headers)) {
+			foreach ($all_headers as $key => $val ) {
+				$new_index = strtoupper($key);
+				unset($all_headers[$key]);
+				$all_headers[$new_index] = $val;
+			}
+		}
+
+		if (isset($all_headers['X-JOMRES-CHANNEL-NAME'])) {
+			$channel_name = filter_var($all_headers['X-JOMRES-CHANNEL-NAME'], FILTER_SANITIZE_SPECIAL_CHARS);
 		} else {
 			Flight::halt(204, "Channel not set");
 		}
-		
-		
+
+
 		if (!isset($channel_name) ||  trim($channel_name) == '' ) {
 			Flight::halt(204, "Channel not set");
 		}
 
-		if ( isset($all_headers['X-JOMRES-proxy_id']) && (int)$all_headers['X-JOMRES-proxy_id'] > 0 ) {  // Only the "system" OAuth client can send proxy ids. "system" is used by plugins in Jomres to call the cmf rest api functionality, however when working on properties, we need to actually hand over the real property manager's cms id. In essence, the "system" client is only used to get valid tokens and to call the endpoint, from that point onwards, the manager's id is used.
+		if ( isset($all_headers['X-JOMRES-PROXY_ID']) && (int)$all_headers['X-JOMRES-PROXY_ID'] > 0 ) {  // Only the "system" OAuth client can send proxy ids. "system" is used by plugins in Jomres to call the cmf rest api functionality, however when working on properties, we need to actually hand over the real property manager's cms id. In essence, the "system" client is only used to get valid tokens and to call the endpoint, from that point onwards, the manager's id is used.
 			if ( Flight::get('scopes') == array("*") ) {
-				Flight::set('user_id' , (int)$all_headers['X-JOMRES-proxy_id'] );
+				Flight::set('user_id' , (int)$all_headers['X-JOMRES-PROXY_ID'] );
 				$thisJRUser = jomres_singleton_abstract::getInstance('jr_user');
-				$thisJRUser->init_user( (int)$all_headers['X-JOMRES-proxy_id'] );
+				$thisJRUser->init_user( (int)$all_headers['X-JOMRES-PROXY_ID'] );
 			} else {
 				Flight::halt(204, "You cannot use proxy ids.");
 			}
@@ -75,7 +83,7 @@ class cmf_utilities
 			Flight::halt(204, "User does not have access to this channel ".$channel_name);
 		}
 
-		Flight::set('channel_header' , 'X-JOMRES-channel-name' );
+		Flight::set('channel_header' , 'X-JOMRES-CHANNEL-NAME' );
 		Flight::set('channel_name' , $channel_name );
 		Flight::set('channel_id' , (int)$result );
 	}
@@ -455,8 +463,10 @@ class cmf_utilities
 		
 		$query = 'SELECT `remote_data` FROM `#__jomres_channelmanagement_framework_property_uid_xref` WHERE property_uid = '.$property_uid.' LIMIT 1';
 		$data = doSelectSql($query,1);
+
+		// Need to base64 encode/decode this data because it's easy to corrupt serialized data when the allowed data is arbitrary
 		if ( $data != '' && $data != false ) {
-			$decoded = unserialize($data);
+			$decoded = unserialize(base64_decode($data));
 			if ($decoded != false ) {
 				return $decoded;
 			}
@@ -471,7 +481,7 @@ class cmf_utilities
 	public static function set_property_remote_data ( $property ) 
 	{
 		if (isset($property->remote_data) || !is_null($property->remote_data) ) {
-			$query = 'UPDATE `#__jomres_channelmanagement_framework_property_uid_xref` SET `remote_data` = \''.serialize($property->remote_data).'\' WHERE property_uid = '.$property->propertys_uid.' LIMIT 1';
+			$query = 'UPDATE `#__jomres_channelmanagement_framework_property_uid_xref` SET `remote_data` = \''.base64_encode(serialize($property->remote_data)).'\' WHERE property_uid = '.$property->propertys_uid.' LIMIT 1';
 			doInsertSql($query);
 		}
 	}
@@ -1164,6 +1174,9 @@ class cmf_utilities
 					$tmpBookingHandler = jomres_singleton_abstract::getInstance('jomres_temp_booking_handler');
 					$tmpBookingHandler->updateBookingField('cart_payment' , false ) ;
 
+					$bkg->sendGuestEmail = false;
+					$bkg->sendHotelEmail = false;
+
 					$insert_result = $bkg->create_booking();
 
 					if ( isset($MiniComponents->miniComponentData["03020"]["insertbooking"]["insertSuccessful"]) && $MiniComponents->miniComponentData["03020"]["insertbooking"]["insertSuccessful"] == true ) {
@@ -1195,7 +1208,7 @@ class cmf_utilities
 
 						return (object) array( "success" => true , "link" => $reply );
 					} else {
-						return (object) array( "success" => false , "message" => "Could not create booking");
+						return (object) array( "success" => false , "message" => "Could not create booking ");
 					}
 				}
 				catch (Exception $e) {
