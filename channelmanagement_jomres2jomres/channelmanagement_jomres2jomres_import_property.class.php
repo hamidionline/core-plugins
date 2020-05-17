@@ -4,7 +4,7 @@
 * @author Woollyinwales IT <sales@jomres.net>
 * @version Jomres 9 
 * @package Jomres
-* @copyright 2019 Woollyinwales IT
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -35,6 +35,17 @@ class channelmanagement_jomres2jomres_import_property
 		// We don't want to import unpublished properties, they're not ready (I suspect I'll need to change this, but for now we'll stick with it)
 
 		if ($remote_property != false && (int)$remote_property->published == 1) {
+
+			// Get the property settings
+			$remote_settings = $remote_server_communication->communicate("GET", '/cmf/property/settings/' . $remote_property_id, [], true);
+
+			if (!isset($remote_settings) || !isset($remote_settings->depositValue)) {
+				throw new Exception("Cannot determine deposit value");
+			}
+
+			// Get the property plugin settings
+			$plugin_settings = $remote_server_communication->communicate("GET", '/cmf/property/plugin/settings/' . $remote_property_id, [], true);
+			$plugin_settings = json_decode(json_encode($plugin_settings), true);
 
 			$room_info = json_decode(json_encode($remote_property->room_info), true);
 
@@ -158,24 +169,24 @@ class channelmanagement_jomres2jomres_import_property
 
 		$new_property = new stdclass();
 
-		$new_property->property_details['property_id'] = $remote_property->propertys_uid;
-		$new_property->property_details['remote_ptype_id'] = $remote_property->ptype_id;
-		$new_property->property_details['local_ptype_id'] = $local_property_type;
+		$new_property->property_details['property_id']				= $remote_property->propertys_uid;
+		$new_property->property_details['remote_ptype_id']			= $remote_property->ptype_id;
+		$new_property->property_details['local_ptype_id']			= $local_property_type;
 
-		$new_property->property_details['name'] = $remote_property->property_name;
+		$new_property->property_details['name']						= $remote_property->property_name;
 
-		$new_property->property_details['street'] = $remote_property->property_street;
-		$new_property->property_details['postcode'] = $remote_property->property_postcode;
-		$new_property->property_details['email'] = $remote_property->property_email;
-		$new_property->property_details['tel'] = $remote_property->property_tel;
-		$new_property->property_details['licensenumber'] = $remote_property->permit_number;
-		$new_property->property_details['lat'] = $remote_property->lat;
-		$new_property->property_details['long'] = $remote_property->long;
-		$new_property->property_details['image_urls'] = $image_urls;
+		$new_property->property_details['street']					= $remote_property->property_street;
+		$new_property->property_details['postcode']					= $remote_property->property_postcode;
+		$new_property->property_details['email']					= $remote_property->property_email;
+		$new_property->property_details['tel']						= $remote_property->property_tel;
+		$new_property->property_details['licensenumber']			= $remote_property->permit_number;
+		$new_property->property_details['lat']						= $remote_property->lat;
+		$new_property->property_details['long']						= $remote_property->long;
+		$new_property->property_details['image_urls']				= $image_urls;
 
-		$new_property->property_details['property_checkin_times'] = $remote_property->property_checkin_times;
+		$new_property->property_details['property_checkin_times']	= $remote_property->property_checkin_times;
 
-		$new_property->property_details['property_description'] = $remote_property->property_description;
+		$new_property->property_details['property_description']		= $remote_property->property_description;
 
 		// Get the deposit type
 		$remote_deposit_type = $remote_server_communication->communicate("GET", '/cmf/property/deposit/type/' . $remote_property_id, [], true);
@@ -184,24 +195,15 @@ class channelmanagement_jomres2jomres_import_property
 			throw new Exception("Cannot determine deposit type");
 		}
 
-		$new_property->deposits['remote_deposit_type_id'] = $remote_deposit_type;
+		$new_property->deposits['remote_deposit_type_id']			= $remote_deposit_type;
 
-		// Get the deposit value
-		$remote_settings = $remote_server_communication->communicate("GET", '/cmf/property/settings/' . $remote_property_id, [], true);
+		$new_property->deposits['remote_deposit_value']				= $remote_settings->depositValue;
 
-		if (!isset($remote_settings) || !isset($remote_settings->depositValue)) {
-			throw new Exception("Cannot determine deposit value");
-		}
-
-		$new_property->deposits['remote_deposit_value'] = $remote_settings->depositValue;
-
-
-		$new_property->property_details['max_guests'] = $max_guests_in_property;
+		$new_property->property_details['max_guests']				= $max_guests_in_property;
 
 		// Not supported (yet?)
 		//$new_property->remote_room_features						= $property_room_features;
-		$new_property->remote_property_features = $property_features;
-
+		$new_property->remote_property_features						= $property_features;
 
 		// New we'll pull location information for this property. The location/information endpoint will try to fuzzy guess the region id if it can't find an exact match
 		$response_location_information = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'GET', 'cmf/location/information/' . $new_property->property_details['lat'] . '/' . $new_property->property_details['long'] . '/');
@@ -218,11 +220,11 @@ class channelmanagement_jomres2jomres_import_property
 		// Ok, we've collected the information we need to start building our property from the available information from the channel, let's start creating our new property
 
 		$new_property_basics_array = array(
-			"property_name" => $new_property->property_details['name'],
-			"remote_uid" => $new_property->property_details['property_id'],
-			"country" => $response_location_information->data->response->country_code,
-			"region_id" => $response_location_information->data->response->region_id,
-			"ptype_id" => $local_property_type
+			"property_name"	=> $new_property->property_details['name'],
+			"remote_uid"	=> $new_property->property_details['property_id'],
+			"country"		=> $response_location_information->data->response->country_code,
+			"region_id"		=> $response_location_information->data->response->region_id,
+			"ptype_id"		=> $local_property_type
 		);
 
 
@@ -265,28 +267,19 @@ class channelmanagement_jomres2jomres_import_property
 					throw new Exception("Did not receive new property uid, failed to create property.");
 				}
 
-				// Check and create settings
-				$settings = array(
-					"property_currencycode" => $remote_settings->property_currencycode, // The property's currency code
-					"singleRoomProperty" => $mrp_or_srp, // Is the property an MRP or an SRP?
-					"tariffmode" => '2'  // Micromanage automatically
-				);
 
 				// Room prices
-
 				jr_import('channelmanagement_jomres2jomres_import_prices');
-
-				// $mrp_or_srp
 
 				foreach ($property_room_types as $room_types) {
 					// First we need rooms, once they are added we can create tariffs
-					$local_room_type = $room_types['amenity'];
-					$remote_room_type_id = $room_types['amenity']->remote_item_id;
-					$local_room_type_id = $room_types['amenity']->jomres_id;
+					$local_room_type		= $room_types['amenity'];
+					$remote_room_type_id	= $room_types['amenity']->remote_item_id;
+					$local_room_type_id		= $room_types['amenity']->jomres_id;
 
 					$data_array = array(
-						"property_uid" => $new_property_id,
-						"rooms" => json_encode(array($room_types))
+						"property_uid"	=> $new_property_id,
+						"rooms"			=> json_encode(array($room_types))
 					);
 
 					$response = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/rooms/', $data_array);
@@ -295,104 +288,87 @@ class channelmanagement_jomres2jomres_import_property
 					channelmanagement_jomres2jomres_import_prices::import_prices($JRUser->id, $channel, $remote_property_id, $new_property_id, $max_guests_in_property, $local_room_type_id , $remote_room_type_id );
 				}
 
-				/*
-				<DepositType DepositTypeID="1">No deposit</DepositType>
-				<DepositType DepositTypeID="2">Percentage of total price (without cleaning)</DepositType>
-				<DepositType DepositTypeID="3">Percentage of total price</DepositType>
-				<DepositType DepositTypeID="4">Fixed amount per day</DepositType>
-				<DepositType DepositTypeID="5">Flat amount per stay</DepositType>
-				*/
+				$post_data = array("property_uid" => $new_property_id, "params" => json_encode($remote_settings)); // mrConfig array values are property specific settings
 
+				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/settings', $post_data);
 
-				$deposit_type = $new_property->deposits['remote_deposit_type_id'];
-				$deposit_value = $new_property->deposits['remote_deposit_value'];
+				if (is_array($plugin_settings) && !empty($plugin_settings)) {
+					foreach ($plugin_settings as $plugin=>$settings) {
+						// Plugin -----------------------------------------------------------------------------
 
-				switch ($deposit_type) {
-					case 1:
-						$settings['chargeDepositYesNo'] = "0";
-						break;
-					case 2:
-						$settings['depositIsPercentage'] = "1";
-						$settings['depositValue'] = $deposit_value;
-						break;
-					case 3:
-						$settings['depositIsPercentage'] = "1";
-						$settings['depositValue'] = $deposit_value;
-						break;
-					case 4:
-						$settings['depositIsPercentage'] = "0"; // Type 4 in Jomres is not supported, so we will go with fixed amount per stay instead
-						$settings['chargeDepositYesNo'] = $deposit_value;
-						break;
-					case 5:
-						$settings['depositIsPercentage'] = "0";
-						$settings['chargeDepositYesNo'] = $deposit_value;
-						break;
-				}
+						if(is_array($settings)) {
+							$sets = array();
+							foreach ($settings as $k=>$v) {
+								if ($k != 'jomres_csrf_token') {
+									$sets[$k] = $v;
+								}
+							}
+							$settings = $sets;
+						}
 
-				$post_data = array("property_uid" => $new_property_id, "params" => json_encode($settings)); // mrConfig array values are property specific settings
-				$response_validated = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'POST', 'cmf/property/validate/settings/keys', $post_data);
+						$data_array = array (
+							"property_uid" 			=> $new_property_id,
+							"plugin" 				=> $plugin,
+							"params"				=> json_encode($settings)
+						);
 
-				if (!isset($response_validated->data->response->valid) || $response_validated->data->response->valid == false) {
-					throw new Exception(jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_VALIDATE_SETTINGS_FAILED', 'CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_VALIDATE_SETTINGS_FAILED', false));
-				}
-
-				if ($response_validated == true) {
-					$response = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/settings', $post_data);
+						$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/plugin/settings/', $data_array);
+					}
 				}
 
 				// Now that we have a new property setup, let's start adding it's various information items.
 
 				// Location
 				$data_array = array(
-					"property_uid" => $new_property_id,
-					"country_code" => $new_property_basics_array['country'],
-					"region_id" => $new_property_basics_array['region_id'],
-					"lat" => $new_property->property_details['lat'],
-					"long" => $new_property->property_details['long'],
+					"property_uid"	=> $new_property_id,
+					"country_code"	=> $new_property_basics_array['country'],
+					"region_id"		=> $new_property_basics_array['region_id'],
+					"lat"			=> $new_property->property_details['lat'],
+					"long"			=> $new_property->property_details['long'],
 
 				);
 				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/location/', $data_array);
 
 				// Contacts
 				$data_array = array(
-					"property_uid" => $new_property_id,
-					"telephone" => $new_property->property_details['tel'],
-					"fax" => '',
-					"email" => $new_property->property_details['email']
+					"property_uid"	=> $new_property_id,
+					"telephone"		=> $new_property->property_details['tel'],
+					"fax"			=> '',
+					"email"			=> $new_property->property_details['email']
 				);
 				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/contacts/', $data_array);
 
 				// Descriptive texts
 				$data_array = array(
-					"property_uid" => $new_property_id,
-					"description" => $new_property->property_details['property_description'],
-					"checkin_times" => $new_property->property_details['property_checkin_times'],
-					"area_activities" => '',
-					"driving_directions" => '',
-					"airports" => '',
-					"othertransport" => '',
-					"terms" => '',
-					"fax" => '',
-					"permit_number" => $new_property->property_details['licensenumber']
+					"property_uid"			=> $new_property_id,
+					"description"			=> $new_property->property_details['property_description'],
+					"checkin_times"			=> $new_property->property_details['property_checkin_times'],
+					"area_activities"		=> '',
+					"driving_directions"	=> '',
+					"airports"				=> '',
+					"othertransport"		=> '',
+					"terms"					=> '',
+					"fax"					=> '',
+					"permit_number"			=> $new_property->property_details['licensenumber']
 				);
 
 				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/text/', $data_array);
 
 				// Address
 				$data_array = array(
-					"property_uid" => $new_property_id,
-					"house" => $new_property_basics_array['property_name'],  // The RU data I'm working with doesn't have address details, so to prevent the system from complaining that the property address details are incomplete, we'll set this to blank for now
-					"street" => ' ',
-					"town" => ' ',
-					"postcode" => ' '
+					"property_uid"	=> $new_property_id,
+					"house"			=> $new_property_basics_array['property_name'],  // The RU data I'm working with doesn't have address details, so to prevent the system from complaining that the property address details are incomplete, we'll set this to blank for now
+					"street"		=> ' ',
+					"town"			=> ' ',
+					"postcode"		=> ' '
 				);
 				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/address/', $data_array);
 
 				// Stars
 				$data_array = array(
-					"property_uid" => $new_property_id,
-					"stars" => 0,
-					"superior" => 0
+					"property_uid"	=> $new_property_id,
+					"stars"			=> 0,
+					"superior"		=> 0
 				);
 				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/stars/', $data_array);
 
@@ -405,8 +381,8 @@ class channelmanagement_jomres2jomres_import_property
 				}
 
 				$data_array = array(
-					"property_uid" => $new_property_id,
-					"features" => $features_str
+					"property_uid"	=> $new_property_id,
+					"features"		=> $features_str
 				);
 				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/features/', $data_array);
 
@@ -415,7 +391,7 @@ class channelmanagement_jomres2jomres_import_property
 				// We need to force a status review, where the system will see if the property is complete. If it is, we can publish it
 
 				$data_array = array(
-					"property_uid" => $new_property_id
+					"property_uid"	=> $new_property_id
 				);
 
 				$property_status_review_response = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/status/review/', $data_array);

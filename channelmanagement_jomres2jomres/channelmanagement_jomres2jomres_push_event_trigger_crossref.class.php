@@ -4,7 +4,7 @@
 * @author Woollyinwales IT <sales@jomres.net>
 * @version Jomres 9 
 * @package Jomres
-* @copyright	2005-2019 Woollyinwales IT
+* @copyright	2005-2020 Vince Wooll
 * Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
 **/
 
@@ -17,7 +17,9 @@ defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowe
 * @package Jomres\CMF
 *
 * Returns an array of Jomres webhooks and the Jomres2jomres scripts that will be called when those webhooks have been triggered
-* For completion I'll record most webhook events as empty for now. As this was inherited from Rentals United thin plugin it's not _really_ necessary, however leaving the handling in place makes it easier to create multiple scripts to handle one event later if needed
+* For completion I'll record most webhook events as empty for now.
+*
+* Where array elements have more than one item, then the index is used to group webhook events together so that the parent can handle the element's webhook (e.g. booking_added can also handle blackbooking_added)
 *
 */
 
@@ -28,7 +30,7 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 		$this->events = array (
 			'blackbooking_added'		=> [  ],
 			'blackbooking_deleted'		=> [  ],
-			'booking_added'				=> [ 'booking_added' ],
+			'booking_added'				=> [ 'booking_added' , 'blackbooking_added'],
 			'booking_cancelled'			=> [  ],
 			'booking_marked_noshow'		=> [  ],
 			'booking_modified'			=> [  ],
@@ -36,8 +38,7 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'booking_note_saved'		=> [  ],
 			'changeover_day_enabled'	=> [  ],
 			'changeover_day_disabled'	=> [  ],
-			'coupon_saved'				=> [  ],
-			'coupon_updated'			=> [  ],
+			'coupon_saved'				=> [ 'coupon_saved' , 'coupon_updated' ],
 			'coupon_deleted'			=> [  ],
 			'deposit_saved'				=> [  ],
 			'extra_deleted'				=> [  ],
@@ -59,6 +60,7 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'property_deleted'			=> [ 'property_deleted' ],
 			'property_published'		=> [  ],
 			'property_settings_updated'	=> [  ],
+			'plugin_settings_saved'		=> [  ],
 			'property_unpublished'		=> [  ],
 			'property_approved'			=> [  ],
 			'property_unapproved'		=> [  ],

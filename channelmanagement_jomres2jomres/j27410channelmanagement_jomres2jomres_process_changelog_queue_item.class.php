@@ -6,7 +6,7 @@
  *
  * @version Jomres 9.8.21
  *
- * @copyright	2005-2017 Vince Wooll
+* @copyright	2005-2020 Vince Wooll
  * Jomres (tm) PHP, CSS & Javascript files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project, and use it accordingly
  **/
 
@@ -40,24 +40,40 @@ class j27410channelmanagement_jomres2jomres_process_changelog_queue_item
             return;
         }
 
-
-        /*$item = unserialize($componentArgs->item);
-
+		$ePointFilepath = get_showtime('ePointFilepath');
 
 
-		if ($componentArgs->id == 6 ) {
-			$new_class_name = 'channelmanagement_jomres2jomres_changelog_item_update_'.strtolower($item->thing);
-			jr_import($new_class_name );
-			if (class_exists($new_class_name)) {
-				$thing_class_result = new $new_class_name($componentArgs);
+        $item = unserialize($componentArgs->item);
+
+		if (isset($item->webhook_event) && $item->webhook_event != '' ) {
+			$new_class_name = 'jomres2jomres_changelog_item_process_'.strtolower($item->webhook_event);
+			if (file_exists( $ePointFilepath.$new_class_name.'.php') ) {
+				require_once ($ePointFilepath.$new_class_name.'.php');
+				if (class_exists($new_class_name)) {
+					try {
+						$thing_class_result = new $new_class_name($componentArgs);
+						if (isset($thing_class_result->success)) {
+							$this->retVals = $thing_class_result->success;
+						} else {
+							logging::log_message('Success not returned ', 'CMF', 'WARNING', serialize($thing_class_result));
+						}
+					}
+					catch (Exception $e) {
+						logging::log_message('Cannot process webhook because... '.$e->getMessage(), 'CMF', 'WARNING');
+					}
+				} else {
+					logging::log_message("Cannot process webhook ".$item->webhook_event." because no item processing task exists for the event.", 'CMF', 'INFO' , serialize($send_response) );
+				}
 			}
-
-		}*/
+		}
+		if (!isset($this->retVals)) {
+			$this->retVals = false;
+		}
 
     }
 
     public function getRetVals()
     {
-        return null;
+        return $this->retVals;
     }
 }
