@@ -43,9 +43,7 @@ class j06002channelmanagement_rentalsunited_import_all_properties {
 		$local_properties = channelmanagement_framework_properties::get_local_property_ids_for_channel( (int)$JRUser->userid , $current_channel );
 
 		$mapped_dictionary_items = channelmanagement_framework_utilities :: get_mapped_dictionary_items ( $current_channel , $mapped_to_jomres_only = true );
-		
-		
-//		if ( empty($local_properties) ) {
+
 			jr_import('channelmanagement_rentalsunited_communication');
 			$this->channelmanagement_rentalsunited_communication = new channelmanagement_rentalsunited_communication();
 			$this->channelmanagement_rentalsunited_communication->set_username($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_rentals_united_username"]);
@@ -62,24 +60,7 @@ class j06002channelmanagement_rentalsunited_import_all_properties {
 					}
 				}
 			}
-/* 		} else {
-			
-			$output = array();
-			$pageoutput = array();
-
-			$output['CHANNELMANAGEMENT_RENTALSUNITED_TITLE'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_TITLE','CHANNELMANAGEMENT_RENTALSUNITED_TITLE',false);
-
-			$pageoutput[] = $output;
-			$tmpl = new patTemplate();
-			$tmpl->addRows( 'pageoutput', $pageoutput );
-			//$tmpl->addRows( 'rows', $rows );
-			$tmpl->setRoot( $ePointFilepath.'templates'.JRDS.find_plugin_template_directory() );
-			$tmpl->readTemplatesFromInput( 'channel_dashboard.html' );
-			echo $tmpl->getParsedTemplate();
-		} */
-		
-
-			
+		jomresRedirect( jomresURL( JOMRES_SITEPAGE_URL . "&task=channelmanagement_framework" ) );
 	}
 
 	// This must be included in every Event/Mini-component

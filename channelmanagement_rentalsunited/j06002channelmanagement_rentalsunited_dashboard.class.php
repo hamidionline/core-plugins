@@ -40,12 +40,17 @@ class j06002channelmanagement_rentalsunited_dashboard {
 		}
 
 		$local_properties = channelmanagement_framework_properties::get_local_property_ids_for_channel( (int)$JRUser->userid , $current_channel );
-
-		if ( empty($local_properties) ) {
-			$MiniComponents->specificEvent('06002', 'channelmanagement_rentalsunited_setup');
+		
+		$item = $MiniComponents->specificEvent('06002', 'channelmanagement_rentalsunited_setup' , array("output_now" => false ) );
+		$dashboard_items = array ( $item );
+		
+		$items = get_showtime("cmf_dashboard_items");
+		if (empty($items)) {
+			$items = $dashboard_items;
 		} else {
-			
+			$items = array_merge( $dashboard_items , $items );
 		}
+		set_showtime("cmf_dashboard_items" , $items );
 	}
 
 	// This must be included in every Event/Mini-component

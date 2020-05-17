@@ -27,35 +27,31 @@ class j06002channelmanagement_rentalsunited_setup {
 		
 		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
 		
-		$local_properties = channelmanagement_framework_properties::get_local_property_ids_for_channel( (int)$JRUser->userid , $current_channel );
+		$local_properties = channelmanagement_framework_properties::get_local_property_ids_for_channel( $current_channel );
 
-		//if ( empty($local_properties) ) {
-			$output = array();
-			$pageoutput = array();
+		$output = array();
+		$pageoutput = array();
 			
-			$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_TITLE'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_TITLE','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_TITLE',false);
-			$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_MESSAGE'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_MESSAGE','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_MESSAGE',false);
-			$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_IMPORT'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_IMPORT','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_IMPORT',false);
-			$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_EXPORT'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_EXPORT','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_EXPORT',false);
+		$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_TITLE'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_TITLE','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_TITLE',false);
+		$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_MESSAGE'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_MESSAGE','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_MESSAGE',false);
+		$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_IMPORT'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_IMPORT','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_IMPORT',false);
+		$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_EXPORT'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_EXPORT','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_EXPORT',false);
 			
-			$output['IMPORT_URL'] = jomresURL(JOMRES_SITEPAGE_URL."&task=channelmanagement_rentalsunited_import_all_properties");
-			//$output['EXPORT_URL'] = jomresURL(JOMRES_SITEPAGE_URL."&task=channelmanagement_rentalsunited_export_all_properties");
+		$output['IMPORT_URL'] = jomresURL(JOMRES_SITEPAGE_URL."&task=channelmanagement_framework_import_properties&channel_name=".$current_channel);
+		//$output['EXPORT_URL'] = jomresURL(JOMRES_SITEPAGE_URL."&task=channelmanagement_rentalsunited_export_all_properties");
 			
-			$pageoutput[] = $output;
+		$pageoutput[] = $output;
 			
-			$tmpl = new patTemplate();
-			$tmpl->addRows( 'pageoutput', $pageoutput );
-			$tmpl->setRoot( $ePointFilepath.'templates'.JRDS.find_plugin_template_directory() );
-			$tmpl->readTemplatesFromInput( 'channel_setup_dashboard.html' );
-			echo $tmpl->getParsedTemplate();
-		//} else {
-		//	return;
-		//}
+		$tmpl = new patTemplate();
+		$tmpl->addRows( 'pageoutput', $pageoutput );
+		$tmpl->setRoot( $ePointFilepath.'templates'.JRDS.find_plugin_template_directory() );
+		$tmpl->readTemplatesFromInput( 'channel_setup_dashboard.html' );
+		$this->retVals = $tmpl->getParsedTemplate();
 	}
 
 	// This must be included in every Event/Mini-component
 	function getRetVals()
 		{
-		return null;
+		return $this->retVals;
 		}
 	}

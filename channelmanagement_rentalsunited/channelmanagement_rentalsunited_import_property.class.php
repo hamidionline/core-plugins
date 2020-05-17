@@ -16,51 +16,42 @@ defined( '_JOMRES_INITCHECK' ) or die( '' );
 class channelmanagement_rentalsunited_import_property
 {
 	
-	public static function import_property( $channel , $remote_property_id = 0 , $mapped_dictionary_items = array() , $proxy_id = 0 )
+	public static function import_property( $channel , $remote_property_id = 0 , $proxy_id = 0 )
 	{
-		if ( (int)$remote_property_id == 0 ) {
-			throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYID_NOTSET','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYID_NOTSET',false) );
-		}
-		
-		if ( empty($mapped_dictionary_items) ) {
-			throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_MAPPEDDICTIONARYITEMS_NOTSET','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_MAPPEDDICTIONARYITEMS_NOTSET',false) );
-		}
-		
-		
-		
-		$siteConfig = jomres_singleton_abstract::getInstance('jomres_config_site_singleton');
-		$jrConfig = $siteConfig->get();
-		
-		if ( trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_rentals_united_username"]) == '' ) {
-			throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_USERNAME_NOT_SET','CHANNELMANAGEMENT_RENTALSUNITED_USERNAME_NOT_SET',false) );
-		}
-		
-		if ( trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_rentals_united_password"]) == '' ) {
-			throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_PASSWORD_NOT_SET','CHANNELMANAGEMENT_RENTALSUNITED_PASSWORD_NOT_SET',false) );
-		}
-		
-		jr_import('channelmanagement_rentalsunited_import_prices');
-		
 
-		// We'll start by setting up the framework singleton which carries the communication functionality to talk to the local Jomres installation
-		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
+		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton'); 
 		
-		// First we will remove any previous references to this remote property id, if it exists. It's the responsibility of the calling functionality to determine if the property should be deleted
-		$response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'DELETE' , 'cmf/property/remote/'.$remote_property_id  );
+		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
 
-		jr_import('channelmanagement_rentalsunited_communication');
-		$channelmanagement_rentalsunited_communication = new channelmanagement_rentalsunited_communication();
-		$channelmanagement_rentalsunited_communication->set_username($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_rentals_united_username"]);
-		$channelmanagement_rentalsunited_communication->set_password($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_rentals_united_password"]);
-		
-		$remote_property = $channelmanagement_rentalsunited_communication->communicate( array( "PropertyID" => $remote_property_id ) , 'Pull_ListSpecProp_RQ' );
+		$mapped_dictionary_items = channelmanagement_framework_utilities :: get_mapped_dictionary_items ( $channel , $mapped_to_jomres_only = true );
+
+        jr_import('channelmanagement_rentalsunited_communication');
+        $channelmanagement_rentalsunited_communication = new channelmanagement_rentalsunited_communication();
+
+        set_showtime("property_managers_id" , $JRUser->id );
+        $auth = get_auth();
+
+        $output = array(
+            "AUTHENTICATION" => $auth,
+            "PROPERTY_ID" => $remote_property_id,
+        );
+
+
+        $tmpl = new patTemplate();
+        $tmpl->addRows('pageoutput', array($output));
+        $tmpl->setRoot(RENTALS_UNITED_PLUGIN_ROOT . 'templates' . JRDS . "xml");
+        $tmpl->readTemplatesFromInput('Pull_ListSpecProp_RQ.xml');
+        $xml_str = $tmpl->getParsedTemplate();
+
+		$remote_property = $channelmanagement_rentalsunited_communication->communicate( 'Pull_ListSpecProp_RQ' , $xml_str );
 
 		// IsArchived
 		if ($remote_property['Property']['IsArchived'] != "true" ) {
 			$atts = '@attributes';
 			
 			// We need to collate information about the property, room features, property features etc. Duplicates can appear so we need to array unique the property later
-
+			// Not the best place for this, probably needs to be in the cmf libs
+			
 			// room types
 			$property_room_types = array();
  			if (!empty($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'])){
@@ -69,7 +60,6 @@ class channelmanagement_rentalsunited_import_property
 					if ($amenity_id == 257 ) {  // Will this change?
 						if ( isset($mapped_dictionary_items['Pull_ListCompositionRooms_RQ']) && array_key_exists ( $amenity_id , $mapped_dictionary_items['Pull_ListCompositionRooms_RQ'] ) ) {
 							$arr = $mapped_dictionary_items['Pull_ListCompositionRooms_RQ'][$amenity_id];
-							$count = count($mapped_dictionary_items['Pull_ListCompositionRooms_RQ'][$amenity_id]);
 							unset($arr->item);
 
 							$count = 0;
@@ -85,10 +75,10 @@ class channelmanagement_rentalsunited_import_property
 				}
 				$property_room_types = array_unique($property_room_types, SORT_REGULAR);
 			}
-			
-			// room features
+
+            // room features
 			$property_room_features = array();
- 			if (!empty($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'])){
+ 			if (!empty($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities']) && !empty($mapped_dictionary_items['Pull_ListAmenitiesAvailableForRooms_RQ'] )){
 				foreach ($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'] as $amenity) {
 					$amenity_id = $amenity[$atts]['CompositionRoomID'];
 					
@@ -144,6 +134,7 @@ class channelmanagement_rentalsunited_import_property
 			}
 			
 
+
 			// Images to be imported
 			$image_urls = array();
 			if (!empty($remote_property['Property']['Images']['Image'])) {
@@ -195,33 +186,44 @@ class channelmanagement_rentalsunited_import_property
 			// Ok, we've collected the information we need to start building our property from the available information from the channel, let's start refactoring that information so that it's useful to Jomres. This will mean connecting to the cmf rest api and determining some extra facts.
 
 			// New we'll pull location information for this property. In RU we are sent the lat/long, we need to re-interpret that to find the country and region id. The location/information endpoint will try to fuzzy guess the region id if it can't find an exact match
+			
 			$response_location_information = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'GET' , 'cmf/location/information/'.$new_property->property_details['lat'].'/'.$new_property->property_details['long'].'/' );
 
-			if (!isset($response_location_information->data->location_information->country_code) || trim($response_location_information->data->location_information->country_code) == '' ) {
+			if (!isset($response_location_information->data->response->country_code) || trim($response_location_information->data->response->country_code) == '' ) {
 				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_COUNTRY_CODE_NOT_FOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_COUNTRY_CODE_NOT_FOUND',false) );
 			}
 
-			if (!isset($response_location_information->data->location_information->region_id) || trim($response_location_information->data->location_information->region_id) == '' ) {
+			if (!isset($response_location_information->data->response->region_id) || trim($response_location_information->data->response->region_id) == '' ) {
 				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_REGION_ID_NOT_FOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_REGION_ID_NOT_FOUND',false) );
 			}
 			
 			$new_property_basics_array =  array (
 				"property_name" => $new_property->property_details['name'] , 
 				"remote_uid" => $new_property->property_details['property_id'] ,  
-				"country" => $response_location_information->data->location_information->country_code ,  
-				"region_id" => $response_location_information->data->location_information->region_id ,  
+				"country" => $response_location_information->data->response->country_code ,  
+				"region_id" => $response_location_information->data->response->region_id ,  
 				"ptype_id" => $local_property_type
 				);
 
 			// Create the new property 
 			$response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'POST' , 'cmf/property/' , $new_property_basics_array );
 
-			if (!isset($response->data->id)) {
-				throw new Exception( "response->data->id not set, failed to create property." );
+			if (!isset($response->data->response)) {
+				throw new Exception( "response->data->response not set, failed to create property." );
 			}
 			
-			$new_property_id = $response->data->id;
+			$new_property_id = $response->data->response;
 
+			set_showtime('new_property_id' , $new_property_id );
+			
+			// Management url
+			$data_array = array (
+				"property_uid"			=> $new_property_id,  
+				"management_url"			=> get_remote_admin_uri_rentalsunited(  $remote_property_id ) 
+			);
+			$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/management/url' , $data_array );
+			
+			
 			if ( !empty($new_property->property_details['image_urls']) ) {
 				foreach ($new_property->property_details['image_urls'] as $image_url ) {
 					channelmanagement_framework_utilities :: get_image ( $image_url ,$new_property_id , 'property' , 0 );
@@ -241,6 +243,27 @@ class channelmanagement_rentalsunited_import_property
 				"tariffmode" 				=> '2'  // Micromanage automatically
 			);
 			
+			// Room prices
+			
+			jr_import('channelmanagement_rentalsunited_import_prices');
+			// $mrp_or_srp
+			foreach ($property_room_types as $room_type ) {
+				$response = channelmanagement_rentalsunited_import_prices::import_prices( $JRUser->id , $channel , $remote_property_id , $new_property_id , $remote_property['Property']['CanSleepMax'] , $room_type['amenity']->jomres_id );
+
+				// Trying to figure out how many rooms there are in the property.
+				$number_of_rooms = floor( (int)$remote_property['Property']['CanSleepMax'] / (int)$remote_property['Property']['StandardGuests'] );
+				if ( $number_of_rooms == 0 ) {
+					$number_of_rooms = 1;
+				}
+
+				$data_array = array (
+					"property_uid"	=> $new_property_id,  
+					"rooms"			=> json_encode( array($room_type))
+				);
+
+				$response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/rooms/' , $data_array );
+				
+			}
 			
 			/* 
 			<DepositType DepositTypeID="1">No deposit</DepositType>
@@ -278,7 +301,7 @@ class channelmanagement_rentalsunited_import_property
 			$post_data = array ( "property_uid"		=> $new_property_id , "params" => json_encode($settings) ); // mrConfig array values are property specific settings
 			$response_validated = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'POST' , 'cmf/property/validate/settings/keys' , $post_data );
 			
-			if (!isset($response_validated->data->validated->valid) || $response_validated->data->validated->valid == false ) {
+			if (!isset($response_validated->data->response->valid) || $response_validated->data->response->valid == false ) {
 				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_VALIDATE_SETTINGS_FAILED','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_VALIDATE_SETTINGS_FAILED',false) );
 			}
 
@@ -356,25 +379,17 @@ class channelmanagement_rentalsunited_import_property
 			);
 			$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/features/' , $data_array );
 			
-			// Room prices
-			foreach ($property_room_types as $room_type ) {
-				$response = channelmanagement_rentalsunited_import_prices::import_prices( $channel , $remote_property_id , $new_property_id , $remote_property['Property']['CanSleepMax'] , $room_type['amenity']->jomres_id );
-				
-				
-				// Trying to figure out how many rooms there are in the property.
-				$number_of_rooms = floor( (int)$remote_property['Property']['CanSleepMax'] / (int)$remote_property['Property']['StandardGuests'] );
-				if ( $number_of_rooms == 0 ) {
-					$number_of_rooms = 1;
-				}
-
+			// Publishing
+			$property_status_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/status/'.$new_property_id , array() );
+			
+			if (isset($property_status_response->data->response) && (int)$property_status_response->data->response->status_code == 2 ) {
 				$data_array = array (
-					"property_uid"	=> $new_property_id,  
-					"rooms"			=> json_encode( array($room_type))
+					"property_uid"			=> $new_property_id
 				);
-				
-				$response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/rooms/' , $data_array );
-				
+				$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/publish/' , $data_array );
 			}
+			
+			return (object) array ( "success" => true , "new_property_id" =>  $new_property_id );
 		}
 	}
 	

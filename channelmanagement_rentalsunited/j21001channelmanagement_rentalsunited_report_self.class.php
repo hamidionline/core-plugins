@@ -22,11 +22,11 @@ class j21001channelmanagement_rentalsunited_report_self {
 			$this->template_touchable=false; return;
 			}
 		
-		$channel_reports = get_showtime("channel_reports");
+		$thin_channels = get_showtime("thin_channels");
 		
-		$channel_reports["rentalsunited"] = array ("channel_name" => "rentalsunited" , "friendly_name" => "Rentals United" , "features" => array ("has_dictionaries" => true ) );
+		$thin_channels["rentalsunited"] = array ("channel_name" => "rentalsunited" , "channel_friendly_name" => "Rentals United" , "features" => array ("has_dictionaries" => true ) );
 		
-		set_showtime("channel_reports" , $channel_reports);
+		set_showtime("thin_channels" , $thin_channels);
 		}
 
 	// This must be included in every Event/Mini-component
