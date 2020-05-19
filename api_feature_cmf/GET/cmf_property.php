@@ -27,8 +27,7 @@ Flight::route('GET /cmf/property/@id', function( $property_uid )
 	cmf_utilities::validate_channel_for_user();  // If the user and channel name do not correspond, then this channel is incorrect and can go no further, it'll throw a 204 error
 	
 	cmf_utilities::validate_property_uid_for_user($property_uid);
-	
-	cmf_utilities::cache_read($property_uid);
+
 	
 	$property = cmf_utilities::get_property_object_for_update($property_uid , true ); // Second arg allows the method to return more detailed information that otherwise is usually not included because pulling that information is slower
 
@@ -37,8 +36,7 @@ Flight::route('GET /cmf/property/@id', function( $property_uid )
 	unset($property->apikey);
 	unset($property->property_mappinglink);
 	unset($property->property_site_id);
-	
-	cmf_utilities::cache_write( $property_uid , "response" , $property );
+
 	
 	Flight::json( $response_name = "response" , $property ); 
 	});
