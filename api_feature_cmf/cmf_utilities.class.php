@@ -155,6 +155,9 @@ class cmf_utilities
 	
 	public static function cache_read($property_uid  , $general_data = false  )
 	{
+		// Needs to be checked before it's considered ready for action
+		return;
+
 		$hash = 'sha256';
 		$algos = hash_algos();
 		if ( in_array( 'sha512' , $algos ) ) {
@@ -208,6 +211,9 @@ class cmf_utilities
 	
 	public static function cache_write($property_uid , $response_name = '' , $response_contents = ''  , $general_data = false )
 	{
+		// Needs to be checked before it's considered ready for action
+		return;
+
 		$hash = 'sha256';
 		$algos = hash_algos();
 		if ( in_array( 'sha512' , $algos ) ) {
@@ -467,10 +473,8 @@ class cmf_utilities
 		// Need to base64 encode/decode this data because it's easy to corrupt serialized data when the allowed data is arbitrary
 		if ( $data != '' && $data != false ) {
 			$decoded = unserialize(base64_decode($data));
-			if ($decoded != false ) {
 				return $decoded;
 			}
-		}
 		
 		return $remote_data;
 	}
