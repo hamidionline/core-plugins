@@ -53,7 +53,7 @@ Flight::route('PUT /cmf/property/room', function()
 	$jrportal_rooms->room_number				= getEscaped(jomresGetParam($_PUT, 'room_number', ''));
 	$jrportal_rooms->room_floor					= getEscaped(jomresGetParam($_PUT, 'room_floor', ''));
 	$jrportal_rooms->singleperson_suppliment	= (float) jomresGetParam($_PUT, 'singleperson_suppliment', 0.0);
-	$jrportal_rooms->room_features_uid			= json_decode(jomresGetParam($_PUT, 'features_list', '[]'));
+	$jrportal_rooms->room_features_uid			= '';
 	$jrportal_rooms->tagline					= getEscaped(jomresGetParam($_PUT, 'tagline', ''));
 	$jrportal_rooms->surcharge					= (float) jomresGetParam($_PUT, 'surcharge', 0.0);
 	$jrportal_rooms->description			= jomresGetParam($_PUT, 'description', '');
@@ -63,14 +63,8 @@ Flight::route('PUT /cmf/property/room', function()
 	} else {
 		$jrportal_rooms->commit_new_room();
 	}
-
-	$property = cmf_utilities::get_property_object_for_update($property_uid); // This utility will return an instance of jomres_properties, because this class has a method for updating an existing property without going through the UI.
-	unset($property->all_property_uids);
-	unset($property->apikey);
-	unset($property->property_mappinglink);
-	unset($property->property_site_id);
 	
-	Flight::json( $response_name = "response" , $property ); 
+	Flight::json( $response_name = "response" , array( "room_uid" => $jrportal_rooms->room_uid) );
 	});
 	
 	
