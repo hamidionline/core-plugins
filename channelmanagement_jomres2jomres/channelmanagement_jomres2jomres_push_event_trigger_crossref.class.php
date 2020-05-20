@@ -67,16 +67,16 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'property_updated'			=> [  ], // Mirrored
 			'property_completed'		=> [  ],
 			'property_incompleted'		=> [  ],
-			'review_deleted'			=> [  ],
-			'review_published'			=> [  ],
+			'review_deleted'			=> [  ], // Mirrored
+			'review_published'			=> [  ], // Mirrored
 			'review_saved'				=> [  ], // Mirrored
-			'review_unpublished'		=> [  ],
-			'room_added'				=> [  ],
-			'room_deleted'				=> [  ],
-			'room_updated'				=> [  ],
-			'rooms_multiple_added'		=> [  ],
+			'review_unpublished'		=> [  ], // Mirrored
+			'room_added'				=> [ 'room_added' , 'room_updated' ], // Mirrored
+			'room_deleted'				=> [  ], // Mirrored
+			'rooms_multiple_added'		=> [  ], // Mirrored
+			'rooms_multiple_deleted'	=> [  ], // Mirrored
 			'tariff_cloned'				=> [  ],
-			'tariffs_updated'			=> [  ]
+			'tariffs_updated'			=> [  ] // Mirrored
 		);
 	}
 
