@@ -28,7 +28,10 @@ class j07310watcher_authmethod_process_basic
         // This script will collate, reformat ( if required ) and send the information to the remote site using the authentication information provided in the componentArgs variable.
         $ePointFilepath=get_showtime('ePointFilepath');
         $this->retVals = false;
-        
+
+        if (!isset($componentArgs['settings']['url'])) {
+        	return;
+		}
         
         $webhook_messages = get_showtime('webhook_messages');
         
@@ -47,6 +50,14 @@ class j07310watcher_authmethod_process_basic
                     $data = $webhook_notification->data;
                 }
 
+                if (!isset($componentArgs['settings']['basic_username'] )) {
+					$componentArgs['settings']['basic_username']  = '';
+				}
+
+                if (!isset($componentArgs['settings']['basic_password'])) {
+					$componentArgs['settings']['basic_password'] = '';
+				}
+                
                 if (isset($data) && $data !== false && isset($webhook_notification->webhook_event) ) { // The data, whatever it is, has been collected, let's send it off to the remote site
                     logging::log_message("Sent to ".$componentArgs['settings']['url'] , 'Webhooks', 'DEBUG' , serialize($data));
                     $data->task = $webhook_notification->webhook_event;
