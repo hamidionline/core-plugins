@@ -20,3 +20,5 @@ http://www.nwbooking.com/
 8. That's Its!
 
 ==============================================
+
+All open source.
