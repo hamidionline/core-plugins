@@ -41,6 +41,8 @@ class j06000cron_process_remote_changelog_items
 
 			return;
 		}
+		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
+		$channelmanagement_framework_singleton->init(999999999);
 
 		$number_of_attempts_allowed = 5;
 
@@ -50,7 +52,9 @@ class j06000cron_process_remote_changelog_items
 			return;
 		}
 
-		$queue_items = channelmanagement_framework_utilities:: get_queue_items();
+		jr_import('channelmanagement_framework_queue_handling');
+		$channelmanagement_framework_queue_handling = new channelmanagement_framework_queue_handling();
+		$queue_items = $channelmanagement_framework_queue_handling->get_queue_items();
 
 		// Queue items need to be triggered as asynchronous tasks, fire and forget. Let the task decide if the job completed successfully
 		if ( !empty($queue_items) ) {
@@ -61,9 +65,9 @@ class j06000cron_process_remote_changelog_items
 					if ($MiniComponents->eventSpecificlyExistsCheck('27410',$target_minicomponent)) {
 						$result = $MiniComponents->specificEvent('27410', $target_minicomponent , $item );
 						if ($result) {
-							channelmanagement_framework_utilities::complete_queue_item( $item->id );
+							$channelmanagement_framework_queue_handling->complete_queue_item( $item->id );
 						} else {
-							channelmanagement_framework_utilities::increment_attempts ( $item->id );
+							$channelmanagement_framework_queue_handling->increment_attempts ( $item->id );
 						}
 					}
 				}
