@@ -45,7 +45,10 @@ class Push_PutConfirmedReservationMulti_RQ
 		// var_dump($managers);exit;
         //var_dump($managers);exit;
 		// We need the manager's id, if we can't find it we'll back out
-        $first_key = array_key_first ($managers);
+
+		reset($managers);
+		$first_key = key($managers);
+
         if ( !isset($managers[$first_key]['user_id']) ||  $managers[$first_key]['user_id'] == 0 ) {
             throw new Exception ( "Cannot identify property manager's id");
         } else {
@@ -147,7 +150,7 @@ class Push_PutConfirmedReservationMulti_RQ
 
         $r['REMOTE_PROPERTY_UID'] = $remote_property_uid;
         $r['DATE_FROM'] = $booking_data_response->data->response[0]->date_from;
-        $r['DATE_TO'] = $booking_data_response->data->response[0]->date_to;
+        $r['DATE_TO'] = date ("Y-m-d" ,strtotime( $booking_data_response->data->response[0]->date_to . " +1 day" ));
         $r['GUEST_NUMBER'] = $booking_data_response->data->response[0]->guest_numbers->number_of_guests;
         if (  $r['GUEST_NUMBER'] == 0 ) { // Xml will not be parsed properly if guest numbers aren't set so we'll default to 2 as a fallback
             $r['GUEST_NUMBER'] = 2;
@@ -186,13 +189,13 @@ class Push_PutConfirmedReservationMulti_RQ
             $response = $channelmanagement_framework_singleton->rest_api_communicate( $this_channel , 'PUT' , 'cmf/property/booking/link' , $data_array );
 
             $message = "Forwarded booking to channel : ".serialize($notification);
-            logging::log_message($message, 'CHANNEL_MANAGEMENT_FRAMEWORK', 'INFO');
+            logging::log_message($message, 'RENTALS_UNITED', 'INFO');
 
 
 
         } else {
             $message = "Failed to forward booking to channel, response from channel : ".serialize($notification);
-            logging::log_message($message, 'CHANNEL_MANAGEMENT_FRAMEWORK', 'ERROR');
+            logging::log_message($message, 'RENTALS_UNITED', 'ERROR');
         }
 
         return $xml;

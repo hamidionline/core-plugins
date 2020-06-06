@@ -29,7 +29,9 @@ class channelmanagement_rentalsunited_changelog_item_update_availability
 		jr_import('channelmanagement_rentalsunited_communication');
 		$channelmanagement_rentalsunited_communication = new channelmanagement_rentalsunited_communication();
 
-		$changelog_item = unserialize($item->item);
+		$changelog_item = unserialize(base64_decode($item->item));
+
+		return;
 
 		$channelmanagement_framework_user_accounts = new channelmanagement_framework_user_accounts();
 		$manager_accounts = $channelmanagement_framework_user_accounts->find_channel_owners_for_property($item->property_uid);
@@ -44,9 +46,10 @@ class channelmanagement_rentalsunited_changelog_item_update_availability
 
 		// We need to find the "since" date, so we'll go through the previous queue items, find any that refer to availability then find the last two items. The very last should be this item, the one before that will be the last time availability was checked. If that doesn't exist then we'll use "this" item's last updated date
 
+		jr_import('channelmanagement_framework_queue_handling');
+		$channelmanagement_framework_queue_handling = new channelmanagement_framework_queue_handling();
 
-
-		$all_queue_items = channelmanagement_framework_utilities:: get_all_queue_items_for_property($item->property_uid);
+		$all_queue_items = $channelmanagement_framework_queue_handling->get_all_queue_items_for_property($item->property_uid);
 
 		ksort ( $all_queue_items , SORT_REGULAR  );
 		// Now we will get all of the items that refer to availability
@@ -55,7 +58,7 @@ class channelmanagement_rentalsunited_changelog_item_update_availability
 		$uncompleted_items = array();  // In case there are no completed items yet
 		if (!empty($all_queue_items)) {
 			foreach ( $all_queue_items as $queue_item) {
-				$queue_thing = unserialize($queue_item->item);
+				$queue_thing = unserialize(base64_decode($queue_item->item));
 				if ($queue_thing->thing == 'Availability') {
 					if ($queue_item->completed == 0 ) {
 						$uncompleted_items[$queue_item->id ] = $queue_item;
@@ -73,7 +76,8 @@ class channelmanagement_rentalsunited_changelog_item_update_availability
 			$since_item = reset($completed_items);
 		}
 
-		$thing = unserialize($since_item->item);
+		$thing = unserialize(base64_decode($since_item->item));
+
 		$since_date = $thing->last_updated;
 
 		$output = array(
