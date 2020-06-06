@@ -43,7 +43,7 @@ class j27410channelmanagement_jomres2jomres_process_changelog_queue_item
 		$ePointFilepath = get_showtime('ePointFilepath');
 
 
-        $item = unserialize($componentArgs->item);
+        $item = unserialize(base64_decode($componentArgs->item));
 
 		if (isset($item->webhook_event) && $item->webhook_event != '' ) {
 			$new_class_name = 'jomres2jomres_changelog_item_process_'.strtolower($item->webhook_event);
@@ -55,14 +55,14 @@ class j27410channelmanagement_jomres2jomres_process_changelog_queue_item
 						if (isset($thing_class_result->success)) {
 							$this->retVals = $thing_class_result->success;
 						} else {
-							logging::log_message('Success not returned ', 'CMF', 'WARNING', serialize($thing_class_result));
+							logging::log_message('Success not returned ', 'JOMRES2JOMRES', 'WARNING', serialize($thing_class_result));
 						}
 					}
 					catch (Exception $e) {
-						logging::log_message('Cannot process webhook because... '.$e->getMessage(), 'CMF', 'WARNING');
+						logging::log_message('Cannot process webhook because... '.$e->getMessage(), 'JOMRES2JOMRES', 'WARNING');
 					}
 				} else {
-					logging::log_message("Cannot process webhook ".$item->webhook_event." because no item processing task exists for the event.", 'CMF', 'INFO' , serialize($send_response) );
+					logging::log_message("Cannot process webhook ".$item->webhook_event." because no item processing task exists for the event.", 'JOMRES2JOMRES', 'INFO' , serialize($send_response) );
 				}
 			}
 		}

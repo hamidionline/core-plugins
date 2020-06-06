@@ -25,7 +25,7 @@ class jomres2jomres_changelog_item_process_image_added
 {
     function __construct($componetArgs)
 	{
-		$item = unserialize($componetArgs->item);
+		$item = unserialize(base64_decode($componetArgs->item));
 
 		if ( isset($item->data->property_uid) ) {
 			$cross_references = channelmanagement_framework_utilities :: get_cross_references_for_property_uid ( 'jomres2jomres' , $componetArgs->property_uid , '' );
@@ -79,7 +79,7 @@ class jomres2jomres_changelog_item_process_image_added
 				}
 			}
 		} else {
-			logging::log_message("Property id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

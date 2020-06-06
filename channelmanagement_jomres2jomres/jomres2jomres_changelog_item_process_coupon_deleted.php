@@ -25,7 +25,10 @@ class jomres2jomres_changelog_item_process_coupon_deleted
 {
     function __construct($componetArgs)
 	{
-		$item = unserialize($componetArgs->item);
+		$item = unserialize(base64_decode($componetArgs->item));
+
+		jr_import('channelmanagement_framework_queue_handling');
+		$channelmanagement_framework_queue_handling = new channelmanagement_framework_queue_handling();
 
 		if ( isset($item->data->property_uid) ) {
 			$item_type = "coupons";

@@ -18,8 +18,12 @@ class channelmanagement_jomres2jomres_import_property
 	
 	public static function import_property( $channel , $remote_property_id = 0 , $proxy_id = 0 )
 	{
+
 		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
 		$JRUser = jomres_singleton_abstract::getInstance('jr_user');
+
+		jr_import('channelmanagement_framework_queue_handling');
+		$channelmanagement_framework_queue_handling = new channelmanagement_framework_queue_handling();
 
 		$mapped_dictionary_items = channelmanagement_framework_utilities:: get_mapped_dictionary_items($channel, $mapped_to_jomres_only = true);
 
