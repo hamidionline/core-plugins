@@ -27,7 +27,6 @@ class channelmanagement_rentalsunited_changelog_item_update_staticdata
 			throw new Exception('Item object is empty');
 		}
 
-
 		$changelog_item = unserialize(base64_decode($item->item));
 
 		if (!isset($changelog_item->remote_property_id)) {
@@ -81,25 +80,25 @@ class channelmanagement_rentalsunited_changelog_item_update_staticdata
 				throw new Exception(jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REGION_ID_NOT_FOUND', 'CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REGION_ID_NOT_FOUND', false));
 			}
 
+			$output = array(
+				"AUTHENTICATION" => $auth,
+				"LOCATION_ID" => $remote_property['Property']['DetailedLocationID']['value'],
+			);
+
+			$tmpl = new patTemplate();
+			$tmpl->addRows('pageoutput', array($output));
+			$tmpl->setRoot(RENTALS_UNITED_PLUGIN_ROOT . 'templates' . JRDS . "xml");
+			$tmpl->readTemplatesFromInput('Pull_GetLocationDetails_RQ.xml');
+			$xml_str = $tmpl->getParsedTemplate();
+
+			$remote_property_location = $channelmanagement_rentalsunited_communication->communicate( 'Pull_GetLocationDetails_RQ' , $xml_str );
+
 			if ( $response_location_information->data->response->region_id != 0 ) {
 				if (isset($response_location_information->data->response->country_code)) {
 					$country_code = strtoupper(($response_location_information->data->response->country_code));
 					$region_id = $response_location_information->data->response->region_id;
 				}
 			} else {
-				$output = array(
-					"AUTHENTICATION" => $auth,
-					"LOCATION_ID" => $remote_property['Property']['DetailedLocationID']['value'],
-				);
-
-				$tmpl = new patTemplate();
-				$tmpl->addRows('pageoutput', array($output));
-				$tmpl->setRoot(RENTALS_UNITED_PLUGIN_ROOT . 'templates' . JRDS . "xml");
-				$tmpl->readTemplatesFromInput('Pull_GetLocationDetails_RQ.xml');
-				$xml_str = $tmpl->getParsedTemplate();
-
-				$remote_property_location = $channelmanagement_rentalsunited_communication->communicate( 'Pull_GetLocationDetails_RQ' , $xml_str );
-
 				if (!isset($remote_property_location['Locations']['Location'][3]['value'])) {
 					throw new Exception( "Pull_GetLocationDetails_RQ Cannot get detailed location information for property" );
 				}
@@ -112,47 +111,12 @@ class channelmanagement_rentalsunited_changelog_item_update_staticdata
 			}
 
 
-			// We need to collate information about the property, room features, property features etc. Duplicates can appear so we need to array unique the property later
-			// Not the best place for this, probably needs to be in the cmf libs
+			// We need to collate information about the property, room features, property features etc.
 
 			// room types
 			$property_room_types = array();
 			if (!empty($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'])){
-				foreach ($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'] as $amenity) {
-					$amenity_id = $amenity[$atts]['CompositionRoomID'];
-					if ($amenity_id == 257 ) {  // Will this change?
-						if ( isset($mapped_dictionary_items['Pull_ListCompositionRooms_RQ']) && array_key_exists ( $amenity_id , $mapped_dictionary_items['Pull_ListCompositionRooms_RQ'] ) ) {
-							$arr = $mapped_dictionary_items['Pull_ListCompositionRooms_RQ'][$amenity_id];
-							unset($arr->item);
-
-							$count = 0;
-							foreach ($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'] as $a) {
-								$a_id = $a[$atts]['CompositionRoomID'];
-								if ( $a_id == $amenity_id ) {
-									$count++;
-								}
-							}
-							$property_room_types[] = array ( "amenity" => $arr , "count" => $count , "max_guests" => $remote_property['Property']['StandardGuests'] ) ;
-						}
-					}
-				}
-				$property_room_types = array_unique($property_room_types, SORT_REGULAR);
-			}
-
-			// room features
-			$property_room_features = array();
-			if (!empty($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities']) && !empty($mapped_dictionary_items['Pull_ListAmenitiesAvailableForRooms_RQ'] )){
-				foreach ($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'] as $amenity) {
-					$amenity_id = $amenity[$atts]['CompositionRoomID'];
-
-					if ( isset($mapped_dictionary_items['Pull_ListAmenitiesAvailableForRooms_RQ']) && array_key_exists ( $amenity_id , $mapped_dictionary_items['Pull_ListAmenitiesAvailableForRooms_RQ'] ) ) {
-						$arr = $mapped_dictionary_items['Pull_ListAmenitiesAvailableForRooms_RQ'][$amenity_id];
-						unset($arr->item);
-						$property_room_features[] = $arr;
-					}
-
-				}
-				$property_room_features = array_unique($property_room_features, SORT_REGULAR);
+				$property_room_types =get_property_room_types_rentalsunited( $mapped_dictionary_items , $remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'] , $remote_property['Property']['StandardGuests'] );
 			}
 
 			// Property features
@@ -172,28 +136,17 @@ class channelmanagement_rentalsunited_changelog_item_update_staticdata
 			}
 
 			// Find the local property type for this property
-			$local_property_type = 0;
+			$ptype = get_property_type_rentalsunited( $mapped_dictionary_items , $remote_property['Property']['ObjectTypeID']);
+			$local_property_type	= $ptype['local_property_type'];
+			$mrp_srp_flag 			= $ptype['mrp_srp_flag'];
 
-			if (isset($remote_property['Property']['ObjectTypeID'])){
-				$local_property_type = 0;
-				foreach ($mapped_dictionary_items['Pull_ListOTAPropTypes_RQ'] as $mapped_property_type) {
-					if ($remote_property['Property']['ObjectTypeID'] == $mapped_property_type->remote_item_id) {
+			// local property type was never found for this property. Throw an error and stop trying as we can't configure the property
+			if ( $local_property_type == 0 ) {
+				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYTYPE_NOTFOUND',false)." Remote property type ".$remote_property['Property']['ObjectTypeID'] );
+			}
 
-						$local_property_type = $mapped_property_type->jomres_id;
-						$mrp_or_srp = channelmanagement_rentalsunited_import_property::get_property_type_booking_model( $local_property_type ); // Is this an MRP or SRP?
-					}
-				}
-
-				// local property type was never found for this property. Throw an error and stop trying as we can't create the property
-				if ( $local_property_type == 0 ) {
-					throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYTYPE_NOTFOUND',false)." Remote property type ".$remote_property['Property']['ObjectTypeID'] );
-				}
-
-				if (!isset($mrp_or_srp)) {
-					throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_BOOKING_MODEL_NOT_FOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_BOOKING_MODEL_NOT_FOUND',false) );
-				}
-			} else {
-				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_REMOTEPROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_REMOTEPROPERTYTYPE_NOTFOUND',false) );
+			if ( !isset($mrp_srp_flag) ) {
+				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_BOOKING_MODEL_NOT_FOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_BOOKING_MODEL_NOT_FOUND',false)." Remote property type ".$remote_property['Property']['ObjectTypeID'] );
 			}
 
 			$new_property = new stdclass();
@@ -222,7 +175,9 @@ class channelmanagement_rentalsunited_changelog_item_update_staticdata
 			// Move to tariffs?
 			$new_property->property_details['max_guests']				= $remote_property['Property']['CanSleepMax'];
 
-			$new_property->remote_room_features				= $property_room_features;
+			// Not supported
+			//$new_property->remote_room_features				= $property_room_features;
+
 			$new_property->remote_property_features			= $property_features;
 
 			$new_property_basics_array =  array (
@@ -233,41 +188,25 @@ class channelmanagement_rentalsunited_changelog_item_update_staticdata
 				"ptype_id" => $local_property_type
 			);
 
-			// Check and create settings
-			$settings = array (
-				"property_currencycode"		=> $remote_property['Property'][$atts]['Currency'],  // The property's currency code
-				"singleRoomProperty"		=> $mrp_or_srp, // Is the property an MRP or an SRP?
-				"tariffmode" 				=> '2'  // Micromanage automatically
-			);
+
 
 			// Room prices
 
-			jr_import('channelmanagement_rentalsunited_import_prices');
-			// $mrp_or_srp
+			// $mrp_srp_flag
+			//
+			// 0 = MRP (Hotels, bed & breakfast)
+			// 1 = SRP (Villas, apartments, cottages)
 
-			foreach ($property_room_types as $room_type ) {
+			// Jomres mirrors real-world rooms in hotels whereas for villas there's just one, virtual or invisible room for each villa regardless of the number of real-world rooms in the villa
+			// When configuring your property in RU it's possible to create multiple rooms with items like double beds, cots etc. These are then sent in the Pull_ListSpecProp_RQ response. If the property is an SRP we will furtle with the $property_room_types array, selecting just the first element of the array, and setting it's count to 1, before handing off to the foreach that creates rooms and tariffs
 
-				try { // It's ok-ish if this fails, the webhook watcher may put the prices right later
-					channelmanagement_rentalsunited_import_prices::import_prices( $changelog_item->manager_id , $channel , $changelog_item->remote_property_id , $changelog_item->local_property_id , $remote_property['Property']['CanSleepMax'] , $room_type['amenity']->jomres_id );
-				}
-				catch (Exception $e) {
-					logging::log_message("Failed to add property tariffs. Error message : ".$e->getMessage()." -- Remote property id ".$changelog_item->remote_property_id , 'RENTALS_UNITED', 'INFO' , '' );
-				}
-
-				// Trying to figure out how many rooms there are in the property.
-				$number_of_rooms = floor( (int)$remote_property['Property']['CanSleepMax'] / (int)$remote_property['Property']['StandardGuests'] );
-				if ( $number_of_rooms == 0 ) {
-					$number_of_rooms = 1;
-				}
-
-				$data_array = array (
-					"property_uid"	=> $changelog_item->local_property_id,
-					"rooms"			=> json_encode( array($room_type))
-				);
-
-				$rooms_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/rooms/' , $data_array );
+			if ($mrp_srp_flag == 1 ) {
+				$arr					= $property_room_types[0];
+				$arr["count"]			= 1;
+				$property_room_types	= $arr;
 			}
 
+			$channelmanagement_framework_singleton->proxy_manager_id = $changelog_item->manager_id;
 
 			/*
 			<DepositType DepositTypeID="1">No deposit</DepositType>
@@ -280,6 +219,7 @@ class channelmanagement_rentalsunited_changelog_item_update_staticdata
 			$deposit_type	= $remote_property['Property']['Deposit'][$atts]['DepositTypeID'];
 			$deposit_value	= $remote_property['Property']['Deposit']['value'];
 
+			$settings = array();
 			switch ($deposit_type) {
 				case 1:
 					$settings['chargeDepositYesNo'] = "0";
@@ -298,6 +238,8 @@ class channelmanagement_rentalsunited_changelog_item_update_staticdata
 					$settings['chargeDepositYesNo'] = $deposit_value;
 					break;
 			}
+
+			$settings['RENTALSUNITED_SETTING_LocationID'] = $remote_property_location['Locations']['Location'][3][$atts]['LocationID'];
 
 			$post_data = array ( "property_uid"		=> $changelog_item->local_property_id , "params" => json_encode($settings) ); // mrConfig array values are property specific settings
 			$settings_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/settings' , $post_data );
@@ -322,15 +264,16 @@ class channelmanagement_rentalsunited_changelog_item_update_staticdata
 				"fax" 				=> '',
 				"email" 			=> $new_property->property_details['email']
 			);
+
 			$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/contacts/' , $data_array );
 
 			// Address
 			$data_array = array (
 				"property_uid"	=> $changelog_item->local_property_id,
 				"house"			=> $new_property_basics_array['property_name'],  // The RU data I'm working with doesn't have address details, so to prevent the system from complaining that the property address details are incomplete, we'll set this to blank for now
-				"street" 		=> ' ',
-				"town" 			=> ' ',
-				"postcode"		=> ' '
+				"street" 		=> $remote_property_location['Locations']['Location'][3]['value'],
+				"town" 			=> $remote_property_location['Locations']['Location'][3]['value'],
+				"postcode"		=> $remote_property_location['Locations']['Location'][3]['value']  // Not good enough, but we want the property to be published
 			);
 			$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/address/' , $data_array );
 

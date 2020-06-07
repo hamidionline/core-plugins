@@ -1,0 +1,9 @@
+<patTemplate:tmpl name="pageoutput">
+<Pull_ListPropertiesBlocks_RQ>
+    {AUTHENTICATION}
+    <LocationID>{LOCATION_ID}</LocationID>
+    <DateFrom>{DATE_FROM}</DateFrom>
+    <DateTo>{DATE_TO}</DateTo>
+    <IncludeNLA>false</IncludeNLA>
+</Pull_ListPropertiesBlocks_RQ>
+</patTemplate:tmpl>

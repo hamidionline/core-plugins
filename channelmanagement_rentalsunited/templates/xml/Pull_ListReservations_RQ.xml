@@ -1,9 +1,8 @@
 <patTemplate:tmpl name="pageoutput">
-    <Pull_ListPropertyPrices_RQ>
+    <Pull_ListReservations_RQ>
         {AUTHENTICATION}
         <PropertyID>{PROPERTY_ID}</PropertyID>
         <DateFrom>{DATE_FROM}</DateFrom>
         <DateTo>{DATE_TO}</DateTo>
-        <PricingModelMode>0</PricingModelMode>
-    </Pull_ListPropertyPrices_RQ>
+    </Pull_ListReservations_RQ>
 </patTemplate:tmpl>
