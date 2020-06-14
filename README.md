@@ -4,7 +4,7 @@ These are ALL the same Core Plugins for Jomres online booking system.
 
 https://www.jomres.net/
 
-You can also download ALL these Jomres Core Plugins and More here:
+You can also download ALL these Jomres Core Plugins and Plugin Manager(s):
 
 http://www.nwbooking.com/
 
