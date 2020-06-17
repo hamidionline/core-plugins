@@ -229,7 +229,7 @@ class j16000addplugin
                                     dirmv($source, $destination);
                                     rmdir($source);
                                 }
-                         //       $zip->close();
+                                $zip->close();
                             } else {
                                 $error_messsage["ERROR"] = " Unable to unzip " . $newfilename;
                             }
@@ -287,8 +287,10 @@ class j16000addplugin
                             if (!file_exists($updateDirPath . "unpacked" . JRDS . "plugin_info.php")) {
                                 $error_messsage["ERROR"] = " Plugin info file does not exist, cannot continue with installation. ";
                             } else {
-                                require_once $updateDirPath . "unpacked" . JRDS . "plugin_info.php";
                                 $classname = "plugin_info_" . $pluginName;
+                                if (!class_exists($classname)) {
+                                    require_once $updateDirPath . "unpacked" . JRDS . "plugin_info.php";
+                                }
                                 $plugin_class = new $classname();
                                 $min_jomres_ver = explode(".", $plugin_class->data["min_jomres_ver"]);
                                 if (count($min_jomres_ver) == 3 && count($this_jomres_version) == 3) {

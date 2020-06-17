@@ -399,6 +399,7 @@ class j16000showplugins
                             }
                             if ($rp["retired"]) {
                                 $r["INSTALL"] = "";
+                            
                             }
                             if (using_bootstrap()) {
                                 switch ($row_class) {
