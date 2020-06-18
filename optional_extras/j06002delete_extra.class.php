@@ -42,6 +42,7 @@ class j06002delete_extra {
         $webhook_notification->webhook_event_description    = 'Logs when optional extras are deleted.';
         $webhook_notification->webhook_event_plugin         = 'optional_extras';
         $webhook_notification->data                         = new stdClass();
+		$webhook_notification->data->property_uid			= $defaultProperty;
         $webhook_notification->data->extras_uid             = $uid;
         add_webhook_notification($webhook_notification);
         
