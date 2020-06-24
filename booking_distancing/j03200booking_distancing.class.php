@@ -60,13 +60,38 @@ class j03200booking_distancing
 		}
 
 		$bang = explode ("," , $tmpBookingHandler->tmpbooking['dateRangeString'] );
+
+		$first_date = $bang[0];
 		$last_date = end($bang);
 
-		$rooms_to_block = array_keys($tmpBookingHandler->tmpbooking['room_allocations']);
+		$query = "SELECT `room_uid`  FROM #__jomres_room_bookings  WHERE `contract_uid` = ".(int)$componentArgs["contract_uid"] ;
+		$rooms_in_booking = doSelectSql($query);
+
+		if (empty($rooms_in_booking)) {
+			return;
+		}
+
+		$rooms_to_block = array();
+		foreach ($rooms_in_booking as $room ) {
+			$rooms_to_block[] = $room->room_uid;
+		}
 
 		$days_to_block = (int)$mrConfig[ 'qblock_days' ] + 1;
 
 		jr_import('jomres_generic_black_booking_insert');
+
+
+		$bkg = new jomres_generic_black_booking_insert();
+		$bkg->property_uid			= $tmpBookingHandler->tmpbooking['property_uid'];
+		$bkg->arrival				= date( "Y/m/d" , strtotime($first_date. " -".$days_to_block." days "));
+		$bkg->departure				= date( "Y/m/d" , strtotime($first_date.  " -1 day "));
+		$bkg->room_uids				= $rooms_to_block;
+		$bkg->special_reqs			= jr_gettext('_JOMRES_QBLOCK_BLACKBOOKING_NOTE','_JOMRES_QBLOCK_BLACKBOOKING_NOTE',FALSE).$tmpBookingHandler->tmpbooking['booking_number'] ;
+		$bkg->booking_number		= $tmpBookingHandler->tmpbooking['booking_number'];
+
+		$result = $bkg->create_black_booking();
+
+
 		$bkg = new jomres_generic_black_booking_insert();
 		$bkg->property_uid			= $tmpBookingHandler->tmpbooking['property_uid'];
 		$bkg->arrival				= date( "Y/m/d" , strtotime($last_date. " +1 day "));
