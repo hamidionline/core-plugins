@@ -21,6 +21,4 @@ Also, make sure this is what it looks like after you edit this file:
 
 This plugin is ionCube encoded when installed.
 
-I un-encode it and left out the other coding that will disable your site from working without a license key.
-
-After this plugin is installed and you have Paypal plugin installed already and you want to use your Paypal plugin and not use Jomres Platform just delete this plugin and make sure these settings are updated: 'platform_connected' => '0', 'connection_account_id' => '',
+If you don't want to use Jomres Platform just delete this plugin and make sure the settings in the configuration.php are updated to look like this: 'platform_connected' => '0', 'connection_account_id' => '',
