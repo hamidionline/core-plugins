@@ -22,3 +22,6 @@ Also, make sure this is what it looks like after you edit this file:
 This plugin is ionCube encoded when installed.
 
 I un-encode it and left out the other coding that will disable your site from working without a license key.
+
+After this plugin is installed and you have Paypal plugin installed and want to use your Paypla plugin just delete this plugin and make sure these settings are updated:
+'platform_connected' => '0', 'connection_account_id' => '',
