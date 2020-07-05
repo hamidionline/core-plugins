@@ -1,6 +1,6 @@
 # core-plugins
 
-These are ALL the same Core Plugins for Jomres online booking system.
+These are ALL the Core Plugins for Jomres online booking system.
 
 https://www.jomres.net/
 
