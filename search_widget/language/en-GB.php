@@ -22,8 +22,13 @@ jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_DATES_REGIONS', "Ho
 jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_DATES_ROOM_TYPES', "Horizontal form with checkin/out dates and the room types dropdown.<br/>  params=\"&search_widget='horizontal_dates_room_types'\" <br/> Supported BS versions : BS3. "  );
 jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_DATES_STARS', "Horizontal form with checkin/out dates and the stars dropdown.<br/>  params=\"&search_widget='horizontal_dates_stars'\" <br/> Supported BS versions : BS3. "  );
 jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_DATES_TOWNS', "Horizontal form with checkin/out dates and the towns dropdown.<br/>  params=\"&search_widget='horizontal_dates_towns'\" <br/> Supported BS versions : BS3. " );
-//jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET', "xxxxxxx" );
-//jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET', "xxxxxxx" );
+
+jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_DATES_CATEGORIES', "Horizontal form with checkin/out dates and the property categories dropdown.<br/>  params=\"&search_widget='horizontal_dates_categories'\" <br/> Supported BS versions : BS3. " );
+jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_PROPERTY_NAME', "Horizontal form with input field to allow searching by property name.<br/>  params=\"&search_widget='horizontal_property_name'\" <br/> Supported BS versions : BS3. " );
+jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_DESCRIPTION', "Horizontal form with input field to allow searching by all property fields (description, location, read more etc)<br/>  params=\"&search_widget='horizontal_description'\" <br/> Supported BS versions : BS3. " );
+jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_LOCATION_DATES_CATEGORIES', "Horizontal form with searchable location dropdown, checkin/out dates and Sleeps dropdown.<br/>  params=\"&search_widget='horizontal_description'\" <br/> Supported BS versions : BS3. " );
+
+
 
 
 jr_define( '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_VERTICAL_DATES_SLEEPS', "Vertically laid out form with checkin/out dates and the Sleeps dropdown.<br/>  params=\"&search_widget='vertical_dates_sleeps'\" <br/> Supported BS versions : BS3." );

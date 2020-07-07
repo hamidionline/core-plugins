@@ -26,11 +26,10 @@ class j06000search_widget
 					'arguments_distinct' => true,
 					'info' => '_JOMRES_SHORTCODES_06000SEARCH_WIDGET',
 					'arguments' => array(
-
 						array(
 							'argument' => 'search_widget',
-							'arg_info' => '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_VERTICAL_DATES_SLEEPS',
-							'arg_example' => 'vertical_dates_sleeps',
+							'arg_info' => '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_LOCATION_DATES_CATEGORIES',
+							'arg_example' => 'horizontal_location_search_dates_sleeps',
 						),
 						array(
 							'argument' => 'search_widget',
@@ -113,12 +112,44 @@ class j06000search_widget
 							'arg_info' => '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_DATES_TOWNS',
 							'arg_example' => 'horizontal_dates_towns',
 						),
+						array(
+							'argument' => 'search_widget',
+							'arg_info' => '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_DATES_CATEGORIES',
+							'arg_example' => 'horizontal_dates_categories',
+						),
+						array(
+							'argument' => 'search_widget',
+							'arg_info' => '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_PROPERTY_NAME',
+							'arg_example' => 'horizontal_property_name',
+						),
+						array(
+							'argument' => 'search_widget',
+							'arg_info' => '_JOMRES_SHORTCODES_06000SEARCH_WIDGET_HORIZONTAL_DESCRIPTION',
+							'arg_example' => 'horizontal_description',
+						),
+
 					),
 				);
 				return;
 			}
 
-		$MiniComponents->specificEvent('06000', 'search', array( 'doSearch' => false , 'includedInModule' => true ));
+
+			$client = new GuzzleHttp\Client();
+			$response = $client->request('GET', JOMRES_SITEPAGE_URL_AJAX.'&task=ajax_locations' , ['connect_timeout' => 10 ] );
+
+			$json_str = (string)$response->getBody();
+			if ($json_str != '' ) {
+				$json = json_decode($json_str);
+				if (!$json == false && !empty($json) ) {
+					$options = '';
+					foreach ($json as $location ) {
+						$geographic_search = $location->form_element."^".urlencode($location->element_name);
+						$options .= '<option value="'.$geographic_search.'" >'.$location->element_name.'</option>';
+					}
+				}
+			}
+
+		$MiniComponents->specificEvent('06000', 'search', array( 'doSearch' => false , 'includedInModule' => true , 'form_elements' => array ("options" => $options) ) );
 
 		}
 

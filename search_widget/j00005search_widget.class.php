@@ -14,25 +14,33 @@ defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowe
 
 class j00005search_widget {
 	function __construct($componentArgs)
-		{
+	{
 		// Must be in all minicomponents. Minicomponents with templates that can contain editable text should run $this->template_touch() else just return 
-		$MiniComponents =jomres_getSingleton('mcHandler');
-		if ($MiniComponents->template_touch)
-			{
-			$this->template_touchable=false; return;
-			}
-		
+		$MiniComponents = jomres_getSingleton('mcHandler');
+		if ($MiniComponents->template_touch) {
+			$this->template_touchable = false;
+			return;
+		}
+
 		$ePointFilepath = get_showtime('ePointFilepath');
 
-		if (file_exists($ePointFilepath.'language'.JRDS.get_showtime('lang').'.php'))
-			require_once($ePointFilepath.'language'.JRDS.get_showtime('lang').'.php');
-		else
-			{
-			if (file_exists($ePointFilepath.'language'.JRDS.'en-GB.php'))
-				require_once($ePointFilepath.'language'.JRDS.'en-GB.php');
-			}
-
+		if (file_exists($ePointFilepath . 'language' . JRDS . get_showtime('lang') . '.php'))
+			require_once($ePointFilepath . 'language' . JRDS . get_showtime('lang') . '.php');
+		else {
+			if (file_exists($ePointFilepath . 'language' . JRDS . 'en-GB.php'))
+				require_once($ePointFilepath . 'language' . JRDS . 'en-GB.php');
 		}
+
+		if (isset($_REQUEST['geographic_search']) && trim($_REQUEST['geographic_search']) != '' ) {
+			$bang = explode ("^" , $_REQUEST['geographic_search'] );
+			// No need to sanitise, the search function will do that later
+			$type = $bang[0];
+			$value = $bang[1];
+			$_GET[$type] = $value;
+			$_REQUEST[$type] = urldecode($value);
+			unset($_REQUEST['geographic_search']);
+		}
+	}
 
 	// This must be included in every Event/Mini-component
 	function getRetVals()
