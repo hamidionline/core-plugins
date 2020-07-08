@@ -186,6 +186,8 @@ class j06000extended_maps
                 $current_property_details = jomres_singleton_abstract::getInstance('basic_property_details');
                 $current_property_details->gather_data($puid);
 
+				$mrConfig = getPropertySpecificSettings($puid);
+
                 $jomres_property_types = jomres_singleton_abstract::getInstance('jomres_property_types');
                 $jomres_property_types->get_property_type($current_property_details->ptype_id);
 
@@ -214,8 +216,12 @@ class j06000extended_maps
 						$o['PROPERTY_DESCRIPTION'] = jr_substr(strip_tags($current_property_details->property_description),0,$trim_value,"UTF-8")."...";
 					}
 				}
-                
-				$o['PROPERTY_STREET'] = str_replace("'", '`',$current_property_details->property_street);
+				if ( $mrConfig['hide_local_address'] == '1' ) {
+					$o[ 'PROPERTY_STREET' ] =  jr_gettext('HIDDEN_ADDRESS_PLACEHOLDER', 'HIDDEN_ADDRESS_PLACEHOLDER', false);
+				} else {
+					$o['PROPERTY_STREET'] = str_replace("'", '`',$current_property_details->property_street);
+				}
+
                 $o['PROPERTY_TOWN'] = str_replace("'", '`',$current_property_details->property_town);
                 
 				$o['PROPERTY_REGION'] = str_replace("'", '`',$current_property_details->property_region);

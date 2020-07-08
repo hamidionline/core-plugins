@@ -24,7 +24,11 @@ class j00012extended_maps
 		
 		$siteConfig = jomres_singleton_abstract::getInstance('jomres_config_site_singleton');
 		$jrConfig = $siteConfig->get();
-		
+
+		if ( !isset($jrConfig[ 'extmaps_overrideplist' ] )) {
+			$jrConfig[ 'extmaps_overrideplist' ] = 0;
+		}
+
 		if ($jrConfig[ 'extmaps_overrideplist' ] != '1') {
 			return;
 		}

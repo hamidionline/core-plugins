@@ -28,7 +28,55 @@ class j10525extended_maps
 
         $siteConfig = jomres_singleton_abstract::getInstance('jomres_config_site_singleton');
         $jrConfig = $siteConfig->get();
-		
+
+        if (!isset($jrConfig[ 'extmaps_overrideplist' ])) {
+			$jrConfig[ 'extmaps_overrideplist' ]	= 0;
+		}
+
+		if (!isset($jrConfig[ 'extmaps_width' ])) {
+			$jrConfig[ 'extmaps_width' ]			= 600;
+		}
+
+		if (!isset($jrConfig[ 'extmaps_height' ])) {
+			$jrConfig[ 'extmaps_height' ]			= 400;
+		}
+
+		if (!isset($jrConfig[ 'extmaps_maptype' ])) {
+			$jrConfig[ 'extmaps_maptype' ]			= 'ROADMAP';
+		}
+
+		if (!isset($jrConfig[ 'extmaps_groupmarkers' ])) {
+			$jrConfig[ 'extmaps_groupmarkers' ]			= 1;
+		}
+
+		if (!isset($jrConfig[ 'extmaps_infoicon' ])) {
+			$jrConfig[ 'extmaps_infoicon' ]			= JOMRES_ROOT_DIRECTORY.'/core-plugins/je_mapview/markers/scenic.png';
+		}
+
+		if (!isset($jrConfig[ 'extmaps_popupwidth' ])) {
+			$jrConfig[ 'extmaps_popupwidth' ]		= 280;
+		}
+
+		if (!isset($jrConfig[ 'extmaps_img_width' ])) {
+			$jrConfig[ 'extmaps_img_width' ]		= 150;
+		}
+
+		if (!isset($jrConfig[ 'extmaps_img_height' ])) {
+			$jrConfig[ 'extmaps_img_height' ]		= 120;
+		}
+
+		if (!isset($jrConfig[ 'extmaps_show_desc' ])) {
+			$jrConfig[ 'extmaps_show_desc' ]		= 1;
+		}
+
+		if (!isset($jrConfig[ 'extmaps_trim_desc' ])) {
+			$jrConfig[ 'extmaps_trim_desc' ]		= 1;
+		}
+
+		if (!isset($jrConfig[ 'extmaps_trim_value' ])) {
+			$jrConfig[ 'extmaps_trim_value' ]		= 100;
+		}
+
 		$yesno = array();
 		$yesno[] = jomresHTML::makeOption( '0', jr_gettext("_JOMRES_COM_MR_NO",'_JOMRES_COM_MR_NO',false) );
 		$yesno[] = jomresHTML::makeOption( '1', jr_gettext("_JOMRES_COM_MR_YES",'_JOMRES_COM_MR_YES',false) );
@@ -62,10 +110,7 @@ class j10525extended_maps
 		$configurationPanel->setmiddle(jomresHTML::selectList( $options, 'cfg_extmaps_maptype','class="inputbox" size="1"', 'value', 'text', $jrConfig[ 'extmaps_maptype' ]));
 		$configurationPanel->setright();
 		$configurationPanel->insertSetting();
-		
-		if (!isset($jrConfig[ 'extmaps_groupmarkers' ]))
-			$jrConfig[ 'extmaps_groupmarkers' ] = "1";
-		
+
 		$configurationPanel->setleft(jr_gettext('_JRPORTAL_EXTENDED_MAPS_GROUPMARKERS', '_JRPORTAL_EXTENDED_MAPS_GROUPMARKERS', false));
 		$configurationPanel->setmiddle(jomresHTML::selectList( $yesno, 'cfg_extmaps_groupmarkers','class="inputbox" size="1"', 'value', 'text', $jrConfig[ 'extmaps_groupmarkers' ]));
 		$configurationPanel->setright();
