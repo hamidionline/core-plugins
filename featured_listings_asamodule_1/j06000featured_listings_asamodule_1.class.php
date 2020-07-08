@@ -123,9 +123,17 @@ class j06000featured_listings_asamodule_1
 		$siteConfig = jomres_singleton_abstract::getInstance( 'jomres_config_site_singleton' );
 		$jrConfig = $siteConfig->get();
 
+		$mrConfig = getPropertySpecificSettings($puid);
+
+
+
 		$current_property_details = jomres_singleton_abstract::getInstance( 'basic_property_details' );
 		$current_property_details->gather_data( $puid );
-		
+
+		if ( $mrConfig['hide_local_address'] == '1' ) {
+			$current_property_details->property_street =  jr_gettext('HIDDEN_ADDRESS_PLACEHOLDER', 'HIDDEN_ADDRESS_PLACEHOLDER', false);
+		}
+
 		$jomres_property_list_prices = jomres_singleton_abstract::getInstance( 'jomres_property_list_prices' );
 
 		$jomres_media_centre_images = jomres_singleton_abstract::getInstance( 'jomres_media_centre_images' );
