@@ -48,13 +48,18 @@ class j06000cron_ical_process_remote_feeds
 				$feed->url = str_replace("#38;" , "" , $feed->url);
 
 				$feed_url = parse_url($feed->url);
-				$uri_query = $feed_url['scheme'].'://'.$feed_url['host'].''.$feed_url['path'].'?'.$feed_url['query'];
+
+				$feed_query = '';
+				if (isset($feed_url['query'])) {
+					$feed_query = $feed_url['query'];
+				}
+				$uri_query = $feed_url['scheme'].'://'.$feed_url['host'].''.$feed_url['path'].'?'.$feed_query;
 				
 				/* $feed->url = str_replace("&#61;" , "=" , $feed->url);
 				$feed_url = parse_url($feed->url);
 				$uri_query = $feed_url['scheme'].'://'.$feed_url['host'].'/'.$feed_url['path'].'?'.$feed_url['query']; */
-				
-				
+
+				logging::log_message("Feed url ".$uri_query, 'ics_importer', 'DEBUG');
 				try {
 					
 /* 					if ($feed_url === false ) {
