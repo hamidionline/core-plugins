@@ -12,34 +12,35 @@
 defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowed.' );
 // ################################################################
 
-class j99999ajax_search_javascript
-	{
-	function __construct()
+
+/**
+#
+ * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ #
+* @package Jomres
+#
+ */
+class j00005ajax_search_composite {
+	function __construct($componentArgs)
 		{
+		// Must be in all minicomponents. Minicomponents with templates that can contain editable text should run $this->template_touch() else just return 
 		$MiniComponents =jomres_getSingleton('mcHandler');
 		if ($MiniComponents->template_touch)
 			{
 			$this->template_touchable=false; return;
 			}
+
+		$ePointFilepath = get_showtime('ePointFilepath');
 		
-		// The purpose of this script is to give different property layout plugins an opportunity to include javascript that might need to be run after the property list has been loaded through ajax.
-		if (AJAXCALL)
+		if (file_exists($ePointFilepath.'language'.JRDS.get_showtime('lang').'.php'))
+			require_once($ePointFilepath.'language'.JRDS.get_showtime('lang').'.php');
+		else
 			{
-			$endrun_javascript_for_eval_by_ajax_search = get_showtime('endrun_javascript_for_eval_by_ajax_search');
-			
-			if (!empty($endrun_javascript_for_eval_by_ajax_search) && get_showtime("task") == "ajax_search_filter")
-				{
-				$javascript = "^";
-				
-				foreach ($endrun_javascript_for_eval_by_ajax_search as $js)
-					{
-					$javascript .= $js;
-					}
-				echo $javascript;
-				}
+			if (file_exists($ePointFilepath.'language'.JRDS.'en-GB.php'))
+				require_once($ePointFilepath.'language'.JRDS.'en-GB.php');
 			}
 		}
-	
+
 	// This must be included in every Event/Mini-component
 	function getRetVals()
 		{
