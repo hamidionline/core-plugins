@@ -21,7 +21,7 @@ class plugin_info_core_gateway_paypal
 			"name"=>"core_gateway_paypal",
 			"category"=>"Payment handling",
 			"marketing"=>" Adds paypal gateway functionality. Apart from ordinary deposit payments, this plugin is required if you want to use the subscription functionality. Once installed you can either allow individual properties to setup their own Paypal settings, or you can override that and force all properties to pay into one central Paypal account.",
-			"version"=>(float)"5.9",
+			"version"=>(float)"6.0",
 			"description"=> " Adds paypal gateway functionality. Apart from ordinary deposit payments, this plugin is required if you want to use the subscription functionality.",
 			"lastupdate"=>"2020/02/14",
 			"min_jomres_ver"=>"9.21.3",
