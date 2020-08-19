@@ -74,6 +74,7 @@ class j01009z_featured_listings
 		
 		if ($calledByModule != '' || $task == '' )
 			{
+			$tmpBookingHandler = jomres_singleton_abstract::getInstance('jomres_temp_booking_handler');
 			$tmpBookingHandler->tmpsearch_data['ajax_list_search_results'] = $this->propertys_uids;
 			unset($tmpBookingHandler->tmpsearch_data['ajax_list_properties_sets']);
 			}
