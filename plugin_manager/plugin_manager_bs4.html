@@ -143,7 +143,9 @@
 			{LICENSE_MESSAGE}
 		</p>
 
-		{API_FAILURE_WARNING}
+		<p class="alert alert-warning">
+			Please do <em>not</em> install REST API related plugins until you have confirmed that your installation of Jomres is able to run them. To do that, please visit the Admin > Jomres > Tools > REST API test page. This includes any of the "Channelmanagement" plugins.
+		</p>
 
 		<patTemplate:tmpl name="plugins_require_upgrade" type="simpleCondition" requiredVars="upgrade_text">
 		<a href="javascript:void(0);" onclick="upgrade_core_plugins();" id="upgrade_core_plugins" class="btn btn-primary btn-large">{UPGRADE_TEXT}</a>
