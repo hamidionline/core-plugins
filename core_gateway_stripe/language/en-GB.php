@@ -13,7 +13,7 @@ defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
 jr_define('STRIPE_TITLE',"Stripe");
-jr_define('STRIPE_CONNECT_CONFIG_INFO',"This Stripe gateway is designed specifically to allow you as the site manager to receive a portion of the payments made to Property Managers at booking time. Before it can be used, you must first setup your own integration with Stripe Connect. <a href='http://www.jomres.net/manual/site-managers-guide/23-control-panel/payment-methods/340-core-gateway-stripe' target='_blank' class='btn btn-primary'>Documentation for this plugin can be found here.</a><br/>If you click Save on this page, to enable this plugin to work seamlessly <strong>all other gateways will be disabled</strong>");
+jr_define('STRIPE_CONNECT_CONFIG_INFO',"This Stripe gateway is designed specifically to allow you as the site manager to receive a portion of the payments made to Property Managers at booking time. Before it can be used, you must first setup your own integration with Stripe Connect. <a href='http://www.jomres.net/manual/site-managers-guide/23-control-panel/payment-methods/340-core-gateway-stripe' target='_blank' class='btn btn-primary'>Documentation for this plugin can be found here.</a><br/>If you click Save on this page, to enable this plugin to work seamlessly <strong>all other gateways will be disabled</strong> Before getting started, make sure that you have gone to your Stripe Connect page and indicated that you are setting up a platform. Once that has been done follow the onscreen instructions to setup your account. Before managers can Connect their account with yours you must visit Settings > Connect Settings and in the \"OAuth settings\" area enabled OAuth for Standard Accounts and then click Save (note, you will need to do this in both Test and Live modes). " );
 
 jr_define('STRIPE_REGISTER_CONNECT',"Connect with us!");
 jr_define('STRIPE_REGISTER_CONNECT_BLURB',"You've registered, but the connection isn't complete yet. You need to connect your Stripe account with our website. Once that's done, you can add all of your properties to our site and start taking bookings.");
@@ -28,7 +28,7 @@ jr_define('STRIPE_SETUP_DISCONNECT',"Disconnect your account.");
 jr_define('STRIPE_SETUP_DISCONNECTED',"Account disconnected, you can close this window now.");
 
 jr_define('STRIPE_CONNECT_SITE_CONFIG_CLIENT_ID',"Stripe Connect Client ID");
-jr_define('STRIPE_CONNECT_SITE_CONFIG_CLIENT_ID_DESC',"You can get your Stripe Client ID from your <a href='https://dashboard.stripe.com/account/applications/settings' target='_blank'>Dashboard > Settings > Connect .</a>");
+jr_define('STRIPE_CONNECT_SITE_CONFIG_CLIENT_ID_DESC',"You can get your Stripe Client ID from your <a href='https://dashboard.stripe.com/account/applications/settings' target='_blank'>Dashboard > Settings > Connect . API keys are under the Developers menu option.</a>");
 jr_define('STRIPE_CONNECT_SITE_CONFIG_RETURN_URL',"Please ensure that you set your Redirect URI in <a href='https://dashboard.stripe.com/account/applications/settings' target='_blank'>Connect > Settings</a> to <br/> ");
 
 jr_define('STRIPE_CONNECT_SITE_CONFIG_SECRET_KEY',"Secret key");
@@ -51,6 +51,7 @@ jr_define('STRIPE_PAYMENT_FORM_BILLINGDETAILS',"Billing Details");
 jr_define('STRIPE_PAYMENT_FORM_CARDDETAILS',"Card Details");
 jr_define('STRIPE_PAYMENT_FORM_HOLDER',"Card Holder's Name");
 jr_define('STRIPE_PAYMENT_FORM_PAYNOW',"Pay now");
+jr_define('STRIPE_PAYMENT_FORM_TOPAY',"To pay now");
 
 jr_define('STRIPE_PAYMENT_FORM_VALIDATION_STREET_EMPTY','The street is required and cannot be empty');
 jr_define('STRIPE_PAYMENT_FORM_VALIDATION_CARDNUMBER_LENGTH','The street must be more than 6 and less than 96 characters long');
