@@ -31,8 +31,12 @@ class j00005stripe
 			if (file_exists($ePointFilepath.'language'.JRDS.'en-GB.php'))
 				require_once($ePointFilepath.'language'.JRDS.'en-GB.php');
 			}
-			
-		jomres_cmsspecific_addcustomtag( '<script src="https://js.stripe.com/v3/"></script>' );
+
+		if (!defined("STRIPE_JS_LOADED")) {
+			jomres_cmsspecific_addcustomtag( '<script src="https://js.stripe.com/v3/"></script>' );
+			define('STRIPE_JS_LOADED');
+		}
+
 		
 		require_once($ePointFilepath.'sdk'.JRDS.'vendor'.JRDS.'autoload.php');
 		

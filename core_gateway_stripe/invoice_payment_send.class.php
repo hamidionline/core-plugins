@@ -23,7 +23,7 @@ class invoice_payment_send
 		$siteConfig = jomres_getSingleton('jomres_config_site_singleton');
 		$jrConfig=$siteConfig->get();
 		$mrConfig = getPropertySpecificSettings($tmpBookingHandler->tmpbooking['property_uid']);
-		
+
 		$query		= "SELECT setting,value FROM #__jomres_pluginsettings WHERE prid = 0 AND plugin = 'stripe' ";
 		$settingsList = doSelectSql( $query );
 		if ( count ($settingsList) > 0)
@@ -92,11 +92,11 @@ class invoice_payment_send
 		}
 
 		// Now to decided if we'll need to show the form, or actually check the payment intent has completed the charge
-		if ( isset($tmpBookingHandler->tmpbooking['stripe']['payment_intent_id']) && $tmpBookingHandler->tmpbooking['stripe']['payment_intent_id'] != '' ) {
+		if ( isset($tmpBookingHandler->_tmpbooking['stripe']['payment_intent_id']) && $tmpBookingHandler->_tmpbooking['stripe']['payment_intent_id'] != '' ) {
 
-			$payment_intent_client_secret = $tmpBookingHandler->tmpbooking['stripe']['client_secret'];
+			$payment_intent_client_secret = $tmpBookingHandler->_tmpbooking['stripe']['client_secret'];
 
-			$payment_intent = \Stripe\PaymentIntent::retrieve($tmpBookingHandler->tmpbooking['stripe']['payment_intent_id']); 
+			$payment_intent = \Stripe\PaymentIntent::retrieve($tmpBookingHandler->_tmpbooking['stripe']['payment_intent_id']);
 
 			if ($payment_intent->status == 'succeeded') {
 				
@@ -138,10 +138,15 @@ class invoice_payment_send
 			jomres_cmsspecific_addheaddata( "javascript", $eLiveSite.'js/' , "bootstrapValidator-min.js" );
 			jomres_cmsspecific_addheaddata( "javascript", $eLiveSite.'js/' , "bootstrap-formhelpers-min.js" );
 
-			$current_property_details = jomres_singleton_abstract::getInstance( 'basic_property_details' );
+			$thisJRUser = jomres_singleton_abstract::getInstance('jr_user');
+
+				var_dump($thisJRUser );exit;
+
+				$current_property_details = jomres_singleton_abstract::getInstance( 'basic_property_details' );
 
 			$current_property_details					= jomres_singleton_abstract::getInstance( 'basic_property_details' );
 			$mrConfig									= getPropertySpecificSettings($invoice_array['invoice_data']['property_uid']);
+
 
 			$output['PROPERTY_NAME']											= $current_property_details->get_property_name($invoice_array['invoice_data']['property_uid']);
 			$output['IMG_PATH']													= get_showtime('live_site')."/jomres/core-plugins/core_gateway_stripe/img/accepted_c22e0.png";
@@ -159,7 +164,8 @@ class invoice_payment_send
 			$output['STRIPE_PAYMENT_ERROR_AUTH_FAILED']							= jr_gettext('STRIPE_PAYMENT_ERROR_AUTH_FAILED','STRIPE_PAYMENT_ERROR_AUTH_FAILED',false,false);
 
 			$output['STRIPE_PAYMENTFORM_EMAIL']									= $tmpBookingHandler->tmpguest['email'];
-			
+
+			$output['STRIPE_PAYMENTFORM_NAME']									= $invoice_array['invoice_data']['payer']['firstname']." ".$invoice_array['invoice_data']['payer']['surname'];
 			
 			$output['CURRENCY'] = $invoice_array['invoice_data']['currencycode'];
 			if ( $jrConfig[ 'useGlobalCurrency' ] == "1" )
@@ -181,7 +187,8 @@ class invoice_payment_send
 			$tmpBookingHandler->tmpbooking['stripe']['client_secret'] = $output['CLIENT_SECRET'];
 			$tmpBookingHandler->tmpbooking['stripe']['payment_intent_id'] = $intent->id;
 			$tmpBookingHandler->tmpbooking['stripe']['amount'] = $output['CONTRACT_TOTAL'];
-			
+			$tmpBookingHandler->saveBookingData();
+
 			$pageoutput[]=$output;
 			$tmpl = new patTemplate();
 			$tmpl->setRoot( $ePointFilepath.'templates'.JRDS.find_plugin_template_directory() );

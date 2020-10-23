@@ -60,7 +60,7 @@ class j00605stripe {
 		
 		if ( !isset($settingArray[ 'application_fee' ]) || trim($settingArray[ 'application_fee' ]) =="" )
 			{
-			$message = "Application fee (Stripe Connect Commission) not set. Please set this in Administrator -> Jomres -> Payment methods -> Gateways -> Stripe";
+			$message = "Application fee (Stripe Connect Commission) not set. Please set this in Administrator -> Jomres -> Payment methods -> Gateways -> Stripe. If you are not collecting Connect commission rates then a rate of 0 is acceptable.";
 			logging::log_message( $message , "Stripe" , "ERROR" );
 			throw new Exception( $message );
 			}
@@ -111,13 +111,13 @@ class j00605stripe {
 		jr_import("stripe_user");
 		$stripe_user=new stripe_user();
 		$stripe_user->getStripeUser($manager_id);
-		
+
 		// Now to decided if we'll need to show the form, or actually check the payment intent has completed the charge
-		if ( isset($tmpBookingHandler->tmpbooking['stripe']['payment_intent_id']) && $tmpBookingHandler->tmpbooking['stripe']['payment_intent_id'] != '' ) {
+		if ( isset($tmpBookingHandler->_tmpbooking['stripe']['payment_intent_id']) && $tmpBookingHandler->_tmpbooking['stripe']['payment_intent_id'] != '' ) {
 
-			$payment_intent_client_secret = $tmpBookingHandler->tmpbooking['stripe']['client_secret'];
+			$payment_intent_client_secret = $tmpBookingHandler->_tmpbooking['stripe']['client_secret'];
 
-			$payment_intent = \Stripe\PaymentIntent::retrieve($tmpBookingHandler->tmpbooking['stripe']['payment_intent_id']); 
+			$payment_intent = \Stripe\PaymentIntent::retrieve($tmpBookingHandler->_tmpbooking['stripe']['payment_intent_id']);
 
 			if ($payment_intent->status == 'succeeded') {
 				$message = "Deposit payment of ".floor ($deposit_required)." ".$tmpBookingHandler->tmpbooking['property_currencycode']." paid";
@@ -161,11 +161,14 @@ class j00605stripe {
 			jomres_cmsspecific_addheaddata( "javascript", $eLiveSite.'js/' , "bootstrap-formhelpers-min.js" );
 
 			$current_property_details					= jomres_singleton_abstract::getInstance( 'basic_property_details' );
-			
-			
+
+			$tmpBookingHandler = jomres_singleton_abstract::getInstance('jomres_temp_booking_handler');
+			$output['BOOKING_NUMBER']	= $tmpBookingHandler->tmpbooking['booking_number'];
+
+
 			$output['PROPERTY_NAME']											= $current_property_details->get_property_name($tmpBookingHandler->tmpbooking['property_uid']);
 			$output['CONTRACT_TOTAL']											= floor ($deposit_required*100);
-			$output['CONTRACT_TOTAL_DISPLAY']									= $deposit_required;
+			$output['CONTRACT_TOTAL_DISPLAY']									= output_price($deposit_required , $output['CURRENCY'] , false , false );
 			$output['PUBLIC_KEY']												= $settingArray['stripe_public_key'];
 			
 			$output['IMG_PATH']													= $eLiveSite."img/accepted_c22e0.png";
@@ -187,13 +190,52 @@ class j00605stripe {
 
 			$output['STRIPE_PAYMENTFORM_EMAIL']									= $tmpBookingHandler->tmpguest['email'];
 
+			$output['STRIPE_PAYMENT_FORM_TOPAY']							= jr_gettext('STRIPE_PAYMENT_FORM_TOPAY','STRIPE_PAYMENT_FORM_TOPAY',false,false);
+			$output['_JOMRES_BOOKING_NUMBER']							= jr_gettext('_JOMRES_BOOKING_NUMBER','_JOMRES_BOOKING_NUMBER',false,false);
+
+			$output['ALERT_STATE'] = "default";
+			$output['TEST_MODE_TEXT'] = '';
+			if ($is_test_key) {
+				$output['ALERT_STATE'] = "warning";
+				$output['TEST_MODE_TEXT'] = 'TEST MODE';
+			}
+
+			$thisJRUser = jomres_singleton_abstract::getInstance('jr_user');
+
+			$address_array = array();
+
+			$address_array['line1']			= $tmpBookingHandler->_tmpguest['house'];
+			$address_array['line2']			= $tmpBookingHandler->_tmpguest['street'];
+			$address_array['city']			= $tmpBookingHandler->_tmpguest['town'];
+			$address_array['state']			= $tmpBookingHandler->_tmpguest['region'];
+			$address_array['postal_code']	= $tmpBookingHandler->_tmpguest['postcode'];
+			$address_array['country']		= $tmpBookingHandler->_tmpguest['country'];
+
+			if (!isset($thisJRUser->params['stripe']['customer']['id'] )) {
+				$customer = \Stripe\Customer::create([
+					'email'			=> $tmpBookingHandler->tmpguest["email"],
+					'name'			=> $tmpBookingHandler->_tmpguest['firstname']." ".$tmpBookingHandler->_tmpguest['firstname'],
+					'address'		=> $address_array
+					]);
+				$customer_id = $customer->id;
+			} else {
+				$customer_id = $thisJRUser->params['stripe']['customer']['id'];
+			}
+
+			$tmpBookingHandler->tmpbooking['stripe']['customer_id'] = $customer_id;
+
 			$intent = \Stripe\PaymentIntent::create([
-				'amount' => $output['CONTRACT_TOTAL'],
-				'currency' => $output['CURRENCY'],
-				'transfer_data' => 
+				'amount'			=> $output['CONTRACT_TOTAL'],
+				'currency'			=> $output['CURRENCY'],
+				'description'		=> $output['STRIPE_PAYMENTFORM_NAME']." - ".$output['_JOMRES_BOOKING_NUMBER']." : ".$output['BOOKING_NUMBER'],
+				'transfer_data'		=>
 					[
-					'destination' => $stripe_user->stripe_user_id,
-					]
+					'destination'	=> $stripe_user->stripe_user_id,
+					],
+				'metadata' => [
+					'booking_number'	=> $output['BOOKING_NUMBER'],
+				],
+				'customer'			=> $customer_id
 				]);
 
 			if ($site_commission > 0) {
@@ -204,13 +246,14 @@ class j00605stripe {
 					]
 				);
 			}
-			
+
 			$output['CLIENT_SECRET']	= $intent->client_secret;
 			
 			$tmpBookingHandler->tmpbooking['stripe']['client_secret'] = $output['CLIENT_SECRET'];
 			$tmpBookingHandler->tmpbooking['stripe']['payment_intent_id'] = $intent->id;
 			$tmpBookingHandler->tmpbooking['stripe']['amount'] = $output['CONTRACT_TOTAL'];
-			
+			$tmpBookingHandler->saveBookingData();
+
 			$pageoutput[]=$output;
 			$tmpl = new patTemplate();
 			$tmpl->setRoot( $ePointFilepath.'templates'.JRDS.find_plugin_template_directory() );
@@ -236,3 +279,15 @@ class j00605stripe {
 		return null;
 		}
 	}
+
+if (!function_exists(bcmul)) {
+	function bcmul($_ro, $_lo, $_scale=0) {
+		return round($_ro*$_lo, $_scale);
+	}
+}
+
+if (!function_exists(bcdiv)) {
+	function bcdiv($_ro, $_lo, $_scale=0) {
+		return round($_ro/$_lo, $_scale);
+	}
+}
