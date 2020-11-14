@@ -45,7 +45,7 @@ class j06002custom_property_field_data
 				$r=array();
 				$fieldname =$field['fieldname'];
 				$r['fieldname']=$fieldname;
-				$r['description']=jr_gettext( 'CUSTOM_PROPERTY_FIELD_TITLE_'.$fieldname, $field['description'],false );
+				$r['description']=jr_gettext( 'CUSTOM_PROPERTY_FIELD_TITLE_'.$fieldname, $field['description'],true );
 				if (!isset($current_data[$defaultProperty][$fieldname]))
 					$r['default_value']=jomres_decode($field['default_value']);
 				else
