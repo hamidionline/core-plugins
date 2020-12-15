@@ -484,6 +484,9 @@ class jomres_property_list_prices
 	//get all tariff type ids for properties that may use micromanage
 	function getAllTariffTypeIds($property_uids_to_query)
 		{
+		if (empty($this->allPropertiesTariffsUids)) {
+			return;
+		}
 		$query = "SELECT `tarifftype_id`, `tariff_id`, `roomclass_uid`, `property_uid` FROM #__jomcomp_tarifftype_rate_xref WHERE `tariff_id` IN (".implode(',',$this->allPropertiesTariffsUids).") ";
 		$result = doSelectSql( $query );
 		
