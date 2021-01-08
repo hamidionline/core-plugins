@@ -8,6 +8,6 @@
 defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
-jr_define('_JRPORTAL_ALTERNATIVE_PROPERTIES_TITLE',"Alternative Properties");
-jr_define('_JRPORTAL_ALTERNATIVE_PROPERTIES_TITLE_FRONTEND',"You may also be interested in...");
-jr_define('_JRPORTAL_ALTERNATIVE_PROPERTIES_HLISTLIMIT',"Maximum number of property suggestions to show ");
+jr_define('_JRPORTAL_ALTERNATIVE_PROPERTIES_TITLE',"Strutture Alternative");
+jr_define('_JRPORTAL_ALTERNATIVE_PROPERTIES_TITLE_FRONTEND',"Potresti anche essere interessato a...");
+jr_define('_JRPORTAL_ALTERNATIVE_PROPERTIES_HLISTLIMIT',"Numero massimo di suggerimenti di struttura da mostrare ");

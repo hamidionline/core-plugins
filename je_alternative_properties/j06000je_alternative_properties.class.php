@@ -50,9 +50,13 @@ class j06000je_alternative_properties {
 				unset($property_uids[$k]);
 			}
 		
-		if (count($property_uids) > (int)$jrConfig[ 'alt_prop_listlimit' ])
-			$rand_puids = array_rand($property_uids,(int)$jrConfig[ 'alt_prop_listlimit' ]);
-		else
+		if (count($property_uids) > (int)$jrConfig[ 'alt_prop_listlimit' ]) {
+            if ((int)$jrConfig[ 'alt_prop_listlimit' ] == 0 ) {
+                $jrConfig[ 'alt_prop_listlimit' ] = 3;
+            }
+            $rand_puids = array_rand($property_uids,(int)$jrConfig[ 'alt_prop_listlimit' ]);
+        }
+ 		else
 			$rand_puids = array_keys($property_uids);
 
 		if (empty($rand_puids))
