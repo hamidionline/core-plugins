@@ -30,6 +30,17 @@ class j00005jomres_ical {
 				require_once(get_showtime('ePointFilepath').'language'.JRDS.'en-GB.php');
 			}
 
+		if (!defined('JOMRES_ICAL_FILES_DIR')) {
+			define('JOMRES_ICAL_FILES_DIR' , JOMRES_TEMP_ABSPATH.'ical_files');
+		}
+
+		if (!is_dir(JOMRES_ICAL_FILES_DIR)) {
+			mkdir(JOMRES_ICAL_FILES_DIR);
+			if (!is_dir(JOMRES_ICAL_FILES_DIR)) {
+				throw new Exception("Cannot make ".JOMRES_ICAL_FILES_DIR." directory, cannot continue.");
+			}
+		}
+
 		$property_uid = getDefaultProperty();
 		
 		if ($property_uid > 0)

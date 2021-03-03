@@ -31,7 +31,37 @@ class j06002ical_feeds
 		
 		$defaultProperty = getDefaultProperty();
 		$mrConfig        = getPropertySpecificSettings();
-		
+
+		$files_location = JOMRES_ICAL_FILES_DIR.JRDS.$defaultProperty;
+
+		$existing_files = $files = scandir_getfiles($files_location);
+
+		if ( empty($existing_files)) { // The 99994 script hasn't been triggered before for this property, there will not be any files so we will create them here, even if they're empty
+			// artifically trigger the 99994 script
+			$webhook_notification                               = new stdClass();
+			$webhook_notification->webhook_event                = 'ical_script_files_generate';
+			$webhook_notification->webhook_event_description    = 'Tells the ical webhook watcher to build the base set of ics files';
+			$webhook_notification->webhook_event_plugin         = 'jomres_ical';
+			$webhook_notification->data                         = new stdClass();
+			$webhook_notification->data->property_uid           = $defaultProperty;
+			add_webhook_notification($webhook_notification);
+			$MiniComponents->specificEvent('99994', 'ical_feeds', [] );
+
+			$existing_files = $files = scandir_getfiles($files_location);
+		}
+
+		$relative_files = array();
+		if (!empty($existing_files)) {
+			foreach ($existing_files as $filename ) {
+				$bang = explode("_" , $filename);
+				if (isset($bang[0]) && (int)$bang[0] > 0 ) {
+					$room_uid = $bang[0];
+					$relative_uri = get_showtime('live_site')."/jomres/temp/ical_files/".$defaultProperty."/".$filename;
+					$relative_files[$room_uid] = $relative_uri;
+				}
+			}
+		}
+
 		$current_property_details = jomres_singleton_abstract::getInstance( 'basic_property_details' );
 		$current_property_details->gather_data($defaultProperty);
 		
@@ -65,7 +95,12 @@ class j06002ical_feeds
             } else {
                 $r[ 'ROOM_TYPE' ] = '';
             }
-			
+
+			$r['RELATIVE_PATH'] = '';
+			if ( isset($relative_files[$k])) {
+				$r['RELATIVE_PATH'] = $relative_files[$k];
+			}
+
 			$r[ 'ROOM_NAME' ] = $v['room_name'];
             $r[ 'ROOM_NUMBER' ] = $v['room_number'];
 			$r[ 'ROOM_UID' ] = $k;
