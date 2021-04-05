@@ -147,7 +147,7 @@ class j06110ajax_search_composite
 					{
 					foreach ($realestateList as $rate)
 						{
-						if ( (float)$rate->property_key >= $pricerange_value_from && (float)$rate->property_key <= $pricerange_value_to )
+						if ( (float)$rate->property_key > $pricerange_value_from && (float)$rate->property_key <= $pricerange_value_to )
 							$arr[]=$rate->propertys_uid;
 						}
 					
