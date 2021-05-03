@@ -39,7 +39,12 @@ class j06000asamodule_popular
 						"argument" => "asamodule_popular_vertical",
 						"arg_info" => "_JOMRES_SHORTCODES_06000ASAMODULE_POPULAR_ARG_ASAMODULE_POPULAR_VERTICAL",
 						"arg_example" => "0",
-						)
+						),
+                    array (
+                        "argument" => "asamodule_popular_property_uids",
+                        "arg_info" => "_JOMRES_SHORTCODES_06000ASAMODULE_POPULAR_ARG_ASAMODULE_POPULAR_PROPERTY_UIDS",
+                        "arg_example" => "6,1,5,10",
+                    )
 					)
 				);
 			return;
@@ -50,23 +55,28 @@ class j06000asamodule_popular
 		$listlimit =  trim(jomresGetParam($_REQUEST,'asamodule_popular_listlimit',10));
 		$ptype_ids 	= trim(jomresGetParam($_REQUEST,'asamodule_popular_ptype_ids',''));
 		$vertical 	= (bool)trim(jomresGetParam($_REQUEST,'asamodule_popular_vertical', '0'));
+        $property_uid_string =  trim(jomresGetParam($_REQUEST,'asamodule_popular_property_uids',''));
 
 		$property_type_bang = explode (",",$ptype_ids);
-		
-		$required_property_type_ids = array();
-		foreach ($property_type_bang as $ptype)
-			{
-			if ((int)$ptype!=0)
-				$required_property_type_ids[] = (int)$ptype;
-			}
-		if (!empty($required_property_type_ids))
-			{
-			$clause="AND b.ptype_id IN (".implode(',',$required_property_type_ids).") ";
-			}
-		else
-			$clause='';
+		if (isset($property_uid_string) && $property_uid_string != '' ) {
+            $property_uids_bang = array_map('intval', explode(',', $property_uid_string));
+        }
 
-		$query = "SELECT 
+        if ( !isset($property_uids_bang) || empty( $property_uids_bang)) {
+            $required_property_type_ids = array();
+            foreach ($property_type_bang as $ptype)
+            {
+                if ((int)$ptype!=0)
+                    $required_property_type_ids[] = (int)$ptype;
+            }
+            if (!empty($required_property_type_ids))
+            {
+                $clause="AND b.ptype_id IN (".implode(',',$required_property_type_ids).") ";
+            }
+            else
+                $clause='';
+
+            $query = "SELECT 
 						a.p_uid 
 					FROM #__jomres_pcounter a 
 					CROSS JOIN #__jomres_propertys b ON a.p_uid = b.propertys_uid 
@@ -74,17 +84,20 @@ class j06000asamodule_popular
 						$clause 
 					ORDER BY a.count DESC 
 					LIMIT $listlimit";
-		$result = doSelectSql($query);
+            $result = doSelectSql($query);
+
+            $property_uids = array();
+            foreach ($result as $r)
+            {
+                $property_uids[]=$r->p_uid;
+            }
+        } else {
+            $property_uids =  $property_uids_bang;
+        }
+
 		
-		$property_uids = array();
-		
-		if (!empty($result))
+		if (!empty($property_uids))
 			{
-			foreach ($result as $r)
-				{
-				$property_uids[]=$r->p_uid;
-				}
-			
 			$result = get_property_module_data($property_uids, '', '', $vertical);
 			$rows = array();
 			foreach ($result as $property)
