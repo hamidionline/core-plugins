@@ -125,7 +125,12 @@ class j06110ajax_search_composite
 				$pricerange_value_from = min ($all_ranges);
 				$pricerange_value_to =  max ($all_ranges);
 				}
-			
+
+			if ( $pricerange_value_from == 0 ) {
+                $pricerange_value_from++; // Tariffs with 0 prices, because of days where bookings aren't wanted can still appear so to improve returns we'll set min price to 1
+            }
+
+
 			$tmpBookingHandler->tmpsearch_data['ajax_search_composite_selections']['pricerange_value_from']=$pricerange_value_from;
 			$tmpBookingHandler->tmpsearch_data['ajax_search_composite_selections']['pricerange_value_to']=$pricerange_value_to;
 			if ($pricerange_value_to > 0)
